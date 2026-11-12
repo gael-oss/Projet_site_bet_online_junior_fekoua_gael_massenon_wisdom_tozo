@@ -1,0 +1,240 @@
+/* ===== RESET DE BASE ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background-color: #f4f4f4;
+    color: #222;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* ===== MODAL ÂGE ===== */
+.modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    max-width: 400px;
+    text-align: center;
+}
+
+.modal-content h2 {
+    color: #e63946;
+    margin-bottom: 15px;
+}
+
+.modal-content label,
+.modal-content input {
+    display: block;
+    width: 100%;
+    margin: 10px 0;
+    padding: 8px;
+}
+
+.modal-content button {
+    background: #e63946;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+}
+
+.error { color: red; margin-top: 10px; }
+.warning { color: #888; font-size: 0.8em; margin-top: 15px; }
+
+/* ===== HEADER ===== */
+header {
+    background: #1d3557;
+    color: white;
+    padding: 10px 20px;
+}
+
+.header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.user-info {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.user-info button {
+    background: #e63946;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.banner {
+    background: #ffb703;
+    color: #000;
+    text-align: center;
+    padding: 8px;
+    margin-top: 10px;
+    border-radius: 4px;
+}
+
+/* ===== LAYOUT PRINCIPAL ===== */
+main {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 20px;
+}
+
+.filters,
+.matches,
+.coupon,
+.results {
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+}
+
+.filters { flex: 1 1 100%; }
+.matches { flex: 2 1 500px; }
+.coupon { flex: 1 1 280px; }
+.results { flex: 1 1 100%; }
+
+.filters h2,
+.matches h2,
+.coupon h2,
+.results h2 {
+    margin-bottom: 10px;
+    font-size: 1.2em;
+}
+
+.filters label {
+    margin-right: 15px;
+}
+
+.filters select {
+    padding: 5px;
+    margin-left: 5px;
+}
+
+/* ===== MATCHS ===== */
+.match {
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.match-header {
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.match-status { font-size: 0.85em; color: #666; }
+.match-status.live { color: #e63946; font-weight: bold; }
+
+.odds {
+    display: flex;
+    gap: 10px;
+    margin-top: 8px;
+}
+
+.odd-btn {
+    background: #457b9d;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    flex: 1;
+}
+
+.odd-btn:hover { background: #1d3557; }
+.odd-btn.selected { background: #e63946; }
+
+.odd-users {
+    font-size: 0.75em;
+    color: #555;
+    text-align: center;
+}
+
+/* ===== COUPON ===== */
+.coupon-item {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9em;
+    margin-bottom: 6px;
+}
+
+.coupon-item button {
+    background: transparent;
+    border: none;
+    color: #e63946;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.coupon input {
+    width: 100%;
+    padding: 6px;
+    margin: 8px 0;
+}
+
+#confirmBetBtn {
+    width: 100%;
+    background: #2a9d8f;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.empty { color: #999; font-style: italic; }
+
+/* ===== RÉSULTATS ===== */
+.result-item {
+    border-bottom: 1px solid #eee;
+    padding: 8px 0;
+}
+
+.result-item.win { color: #2a9d8f; }
+.result-item.lose { color: #e63946; }
+
+/* ===== FOOTER ===== */
+footer {
+    background: #1d3557;
+    color: white;
+    text-align: center;
+    padding: 15px;
+    font-size: 0.9em;
+    margin-top: 20px;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    main { flex-direction: column; }
+    .header-top { flex-direction: column; gap: 10px; }
+}

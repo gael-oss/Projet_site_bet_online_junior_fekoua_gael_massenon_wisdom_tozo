@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Efbet - Paris sportifs (fictif)</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+    <!-- ===== MODAL DE VÉRIFICATION D'ÂGE ===== -->
+    <div id="ageModal" class="modal">
+        <div class="modal-content">
+            <h2>Efbet</h2>
+            <p>Ce site est réservé aux personnes majeures (18 ans et plus).</p>
+            <label for="birthdate">Votre date de naissance :</label>
+            <input type="date" id="birthdate">
+            <button id="checkAgeBtn">Entrer</button>
+            <p id="ageError" class="error"></p>
+            <p class="warning">Jouer comporte des risques : endettement, dépendance... Jouez avec des crédits fictifs.</p>
+        </div>
+    </div>
+
+    <!-- ===== CONTENU PRINCIPAL (caché jusqu'à validation) ===== -->
+    <div id="mainContent" class="hidden">
+
+        <!-- HEADER + BANNIÈRE DÉFILANTE -->
+        <header>
+            <div class="header-top">
+                <h1>Efbet</h1>
+                <div class="user-info">
+                    <span id="userCredits">Crédits : 1000</span>
+                    <button id="logoutBtn">Déconnexion</button>
+                </div>
+            </div>
+            <div class="banner">
+                <p id="bannerText"> Offre de bienvenue : 1000 crédits fictifs offerts ! </p>
+            </div>
+        </header>
+
+        <main>
+            <!-- FILTRES -->
+            <section class="filters">
+                <h2>Filtres</h2>
+                <label>Sport :
+                    <select id="sportFilter">
+                        <option value="all">Tous</option>
+                        <option value="Football">Football</option>
+                        <option value="Basketball">Basketball</option>
+                        <option value="Tennis">Tennis</option>
+                    </select>
+                </label>
+                <label>Statut :
+                    <select id="statusFilter">
+                        <option value="all">Tous</option>
+                        <option value="À venir">À venir</option>
+                        <option value="En cours">En cours</option>
+                        <option value="Terminé">Terminé</option>
+                    </select>
+                </label>
+            </section>
+
+            <!-- MATCHS -->
+            <section class="matches">
+                <h2>Matchs</h2>
+                <div id="matchesContainer"></div>
+            </section>
+
+            <!-- COUPON DE PARIS -->
+            <aside class="coupon">
+                <h2>Mon coupon</h2>
+                <div id="couponItems">
+                    <p class="empty">Aucune sélection.</p>
+                </div>
+                <label>Mise (crédits) :
+                    <input type="number" id="stakeInput" min="1" value="10">
+                </label>
+                <p>Gain potentiel : <span id="potentialWin">0</span> crédits</p>
+                <button id="confirmBetBtn">Valider le pari</button>
+                <p id="betMessage"></p>
+            </aside>
+
+            <!-- RÉSULTATS -->
+            <section class="results">
+                <h2>Mes paris</h2>
+                <div id="resultsContainer"><p class="empty">Aucun pari pour le moment.</p></div>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2026 Efbet — Simulation, crédits fictifs uniquement.</p>
+            <p>Rappel : le jeu peut entraîner une dépendance. Fixez-vous des limites.</p>
+        </footer>
+    </div>
+
+    <script src="../js/script.js"></script>
+</body>
+</html>

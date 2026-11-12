@@ -1,0 +1,49 @@
+-- Fonctionnalités du site de paris sportifs en ligne
+
+1. Accès et jeu responsable
+   - À sa première visite, l'utilisateur doit indiquer sa date de naissance.
+   - Le site calcule son âge et vérifie qu'il a au moins 18 ans.
+   - L'accès au site est refusé aux personnes mineures.
+   - Le site rappelle clairement qu'il est réservé aux personnes majeures.
+   - Il propose des outils permettant de fixer des limites de mise, de faire une pause ou de fermer son compte.
+   - Un message informe les utilisateurs des risques liés aux paris.
+
+2. Confort d'utilisation de base
+   - Le site s'adapte aux téléphones, aux tablettes et aux ordinateurs.
+
+3. Gestion et simulation des matchs
+   - Le site génère des matchs de manière aléatoire et affiche un compte à rebours avant leur début.
+   - Les scores sont mis à jour en temps réel pendant les matchs.
+   - Dans cette simulation, un match dure environ trois minutes, ce qui représente une durée fictive de 90 minutes.
+   - Pour le moment, un administrateur peut se connecter afin de gérer les matchs et de définir leurs scores et résultats.
+
+4. Accueil et événements sportifs
+   - Une bannière défilante, manuellement ou automatiquement, présente les offres bonus.
+   - Les matchs des équipes les plus populaires sont mis en avant avec leurs cotes.
+   - L'utilisateur peut choisir le sport et l'événement sur lequel il souhaite parier.
+   - La page d'accueil propose également quelques combinaisons de paris.
+   - Sous chaque cote, le site affiche le nombre d'utilisateurs qui l'ont sélectionnée. Pour le moment, ce nombre peut être généré aléatoirement.
+
+5. Crédits fictifs
+   - Les paris sont effectués avec des crédits fictifs, sans argent réel.
+
+6. Sélection et validation des paris
+   - Après avoir choisi un sport et un événement, l'utilisateur sélectionne un pari ou une combinaison de paris à l'aide d'un bouton dédié.
+   - Le coupon récapitule les sélections de l'utilisateur, les cotes cumulées et le montant misé.
+   - Avant de confirmer son pari, l'utilisateur peut consulter une estimation de son gain potentiel.
+   - L'utilisateur peut modifier ou supprimer ses sélections avant de valider son pari.
+
+7. Résultats des paris
+   - L'utilisateur peut consulter le résultat de ses paris ainsi que ses gains ou ses pertes.
+   - Un message le félicite en cas de gain ou l'encourage en cas de perte.
+
+8. Suivi des matchs en direct
+   - Un bouton permet de suivre les matchs en direct.
+   - Des vidéos pourront être intégrées en dur à la diffusion des matchs.
+   - L'utilisateur doit pouvoir suivre la vidéo en plein écran s'il le souhaite. 
+
+9. Filtres et notifications
+   - Des filtres permettent de rechercher les événements par sport, compétition, date ou statut du match.
+   - Des notifications peuvent informer les utilisateurs du début des matchs et des résultats de leurs paris.
+
+   
