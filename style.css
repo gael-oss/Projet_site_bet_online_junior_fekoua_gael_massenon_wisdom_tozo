@@ -200,6 +200,10 @@ input, select {
   font-size: 1.6em;
 }
 
+.lien-marque {
+  text-decoration: none;
+}
+
 .actions-entete {
   display: flex;
   gap: 10px;
@@ -232,6 +236,11 @@ input, select {
   border-radius: 8px;
   font-weight: bold;
   color: var(--gris-600);
+}
+
+.lien-contact {
+  display: inline-block;
+  text-decoration: none;
 }
 
 .bouton-onglet:hover {
@@ -1023,6 +1032,99 @@ select:focus {
   margin-top: 30px;
 }
 
+.page-contact {
+  max-width: 1100px;
+  margin: 35px auto;
+  padding: 0 20px;
+}
+
+.banniere-contact {
+  padding: 45px;
+  border-radius: 18px;
+  color: white;
+  background: linear-gradient(120deg, var(--bleu), var(--rouge));
+  box-shadow: var(--ombre);
+}
+
+.surtitre-contact {
+  margin-bottom: 10px;
+  font-size: 0.8em;
+  font-weight: bold;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0.85;
+}
+
+.banniere-contact h2 {
+  max-width: 680px;
+  margin-bottom: 10px;
+  font-size: clamp(1.7em, 4vw, 2.5em);
+  line-height: 1.15;
+}
+
+.equipe-contact {
+  margin-top: 35px;
+}
+
+.cartes-equipe {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+}
+
+.carte-equipe {
+  position: relative;
+  min-height: 145px;
+  padding: 22px;
+  overflow: hidden;
+  border-radius: var(--arrondi);
+  background: var(--blanc);
+  box-shadow: var(--ombre);
+}
+
+.numero-equipe {
+  display: block;
+  margin-bottom: 18px;
+  color: var(--rouge);
+  font-size: 0.8em;
+  font-weight: bold;
+}
+
+.carte-equipe h3 {
+  margin-bottom: 5px;
+  color: var(--bleu);
+}
+
+.carte-equipe p {
+  color: var(--gris-600);
+  font-size: 0.85em;
+}
+
+.presentation-contact {
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  gap: 25px;
+  margin-top: 20px;
+  padding: 28px;
+  border-radius: var(--arrondi);
+  background: var(--blanc);
+  box-shadow: var(--ombre);
+}
+
+.repere-contact {
+  color: var(--rouge);
+  font-weight: bold;
+}
+
+.presentation-contact h2 {
+  margin-bottom: 10px;
+  color: var(--bleu);
+}
+
+.presentation-contact p + p {
+  margin-top: 10px;
+}
+
 .note-pied {
   font-size: 0.85em;
   margin-top: 5px;
@@ -1045,6 +1147,21 @@ select:focus {
   }
   .navigation-onglets {
     flex-wrap: wrap;
+  }
+  .page-contact {
+    margin: 20px auto;
+    padding: 0 10px;
+  }
+  .banniere-contact {
+    padding: 30px 24px;
+  }
+  .cartes-equipe {
+    grid-template-columns: 1fr;
+  }
+  .presentation-contact {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    padding: 22px;
   }
   .filtres {
     flex-direction: column;
