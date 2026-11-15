@@ -1,5 +1,3 @@
-// Logique principale du site
-
 // État du site
 let creditsFictifs = 1000;
 let matchs = [];
@@ -726,7 +724,27 @@ function ouvrirVideo(identifiantMatch) {
 }
 
 // Assistant de discussion
+const contenuAssistantSecours = {
+  messageInitial: 'Bonjour. Je suis l\'assistant Efbet. Je peux répondre à vos questions sur les cotes, les combinés, l\'âge minimum et le jeu responsable.',
+  reponses: [
+    { motsCles: ['bonjour', 'salut', 'hello'], texte: 'Bonjour. Comment puis-je vous aider ? Je peux expliquer les cotes, les combinés et le jeu responsable.' },
+    { motsCles: ['age', 'âge', '18', 'mineur'], texte: 'Efbet est réservé aux personnes majeures (18 ans et +). La date de naissance est vérifiée à la première visite.' },
+    { motsCles: ['cote', 'odd'], texte: 'Une cote multipliée par votre mise donne votre gain potentiel. Exemple : cote 2.50 sur 10 crédits donne 25 crédits.' },
+    { motsCles: ['combin'], texte: 'Un combiné regroupe plusieurs paris. Les cotes se multiplient. Il faut que tous les paris gagnent.' },
+    { motsCles: ['respons', 'limite', 'dépendance'], texte: 'Les paris comportent des risques de dépendance. Jouez avec modération. Les crédits utilisés ici sont fictifs.' },
+    { motsCles: ['crédit', 'solde'], texte: 'Vous avez {{credits}} crédits fictifs. Aucun argent réel.' },
+    { motsCles: ['pari', 'paris'], texte: 'Pour parier : 1) Choisissez un match 2) Cliquez sur une cote 3) Vérifiez le coupon 4) Entrez la mise 5) Validez.' },
+    { motsCles: ['direct', 'vidéo'], texte: 'Cliquez sur Live pour voir les matchs en direct, ou sur Regarder le résumé sur un match.' },
+    { motsCles: ['merci'], texte: 'Avec plaisir. Bonne chance !' }
+  ],
+  reponseInconnue: 'Je n\'ai pas compris. Essayez : "les cotes", "combiné", "âge minimum", "jeu responsable".'
+};
+
 async function chargerContenuAssistant() {
+  if (window.location.protocol === 'file:') {
+    return contenuAssistantSecours;
+  }
+
   const reponse = await fetch('../js/chat.json');
   if (!reponse.ok) {
     throw new Error('Impossible de charger js/chat.json : ' + reponse.status);
