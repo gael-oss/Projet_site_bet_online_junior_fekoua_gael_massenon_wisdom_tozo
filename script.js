@@ -1,3 +1,5 @@
+// Logique principale du site
+
 // État du site
 let creditsFictifs = 1000;
 let matchs = [];
@@ -6,6 +8,7 @@ let paris = [];
 let combines = [];
 let filtresActuels = { sport: 'all', competition: 'all', statut: 'all' };
 let identifiantMatchDirect = null;
+const cleEtatSession = 'efbet-etat-session';
 
 // Vidéos associées aux affiches
 const videosParAffiche = {
@@ -89,15 +92,114 @@ document.getElementById('boutonAgeValider').onclick = function() {
 };
 
 // Démarrage du site
-function demarrerApplication() {
-  creerMatchs(10);
-  creerCombines();
-  actualiserTout();
+function demarrerApplication(etatEnregistre) {
+  if (etatEnregistre) {
+    creditsFictifs = etatEnregistre.creditsFictifs;
+    matchs = etatEnregistre.matchs;
+    couponPari = etatEnregistre.couponPari;
+    paris = etatEnregistre.paris;
+    combines = etatEnregistre.combines;
+    filtresActuels = etatEnregistre.filtresActuels;
+    identifiantMatchDirect = etatEnregistre.identifiantMatchDirect;
+    document.getElementById('champMise').value = etatEnregistre.mise;
+    restaurerFiltresVisuels();
+  } else {
+    creerMatchs(10);
+    creerCombines();
+  }
+
   initialiserOnglets();
   initialiserFiltres();
+  if (etatEnregistre && etatEnregistre.ongletActif) {
+    const boutonOnglet = document.querySelector('.bouton-onglet[data-onglet="' + etatEnregistre.ongletActif + '"]');
+    if (boutonOnglet) boutonOnglet.click();
+  }
+  actualiserTout();
   initialiserAssistant();
   initialiserLecteurVideo();
   lancerSimulation();
+
+  const lienContact = document.querySelector('.lien-contact');
+  if (lienContact) lienContact.addEventListener('click', sauvegarderEtatApplication);
+
+  if (etatEnregistre) {
+    for (let indice = 0; indice < paris.length; indice++) {
+      if (paris[indice].statut === 'En attente') {
+        const delai = Math.max(0, (paris[indice].resolutionA || Date.now()) - Date.now());
+        setTimeout(function() { determinerPari(paris[indice].identifiant); }, delai);
+      }
+    }
+  }
+}
+
+function restaurerFiltresVisuels() {
+  const boutonsSport = document.querySelectorAll('#filtresSport .filtre-rapide');
+  for (let indice = 0; indice < boutonsSport.length; indice++) {
+    boutonsSport[indice].classList.toggle('actif', boutonsSport[indice].dataset.sport === filtresActuels.sport);
+  }
+
+  let competitions = [];
+  if (filtresActuels.sport === 'all') {
+    for (const sport in competitionsParSport) competitions = competitions.concat(competitionsParSport[sport]);
+  } else if (competitionsParSport[filtresActuels.sport]) {
+    competitions = competitionsParSport[filtresActuels.sport];
+  }
+
+  const listeCompetitions = document.getElementById('filtreCompetition');
+  listeCompetitions.innerHTML = '<option value="all">Toutes compétitions</option>';
+  for (let indice = 0; indice < competitions.length; indice++) {
+    listeCompetitions.innerHTML += '<option value="' + competitions[indice] + '">' + competitions[indice] + '</option>';
+  }
+  listeCompetitions.value = filtresActuels.competition;
+  document.getElementById('filtreStatut').value = filtresActuels.statut;
+}
+
+function sauvegarderEtatApplication() {
+  const ongletActif = document.querySelector('.bouton-onglet.actif[data-onglet]');
+  const etat = {
+    creditsFictifs: creditsFictifs,
+    matchs: matchs,
+    couponPari: couponPari,
+    paris: paris,
+    combines: combines,
+    filtresActuels: filtresActuels,
+    identifiantMatchDirect: identifiantMatchDirect,
+    mise: document.getElementById('champMise').value,
+    ongletActif: ongletActif ? ongletActif.dataset.onglet : 'accueil'
+  };
+
+  try {
+    sessionStorage.setItem(cleEtatSession, JSON.stringify(etat));
+  } catch (erreur) {
+    console.error('Impossible de conserver la session avant l’ouverture de Contact.', erreur);
+  }
+}
+
+function chargerEtatSession() {
+  try {
+    const texteEtat = sessionStorage.getItem(cleEtatSession);
+    if (!texteEtat) return null;
+
+    sessionStorage.removeItem(cleEtatSession);
+    const etat = JSON.parse(texteEtat);
+    if (
+      !Number.isFinite(etat.creditsFictifs) ||
+      !Array.isArray(etat.matchs) ||
+      !Array.isArray(etat.couponPari) ||
+      !Array.isArray(etat.paris) ||
+      !Array.isArray(etat.combines) ||
+      !etat.filtresActuels ||
+      !['all', 'Football', 'Basketball', 'Tennis'].includes(etat.filtresActuels.sport) ||
+      !['all', 'À venir', 'En cours', 'Terminé'].includes(etat.filtresActuels.statut)
+    ) {
+      throw new Error('Les données de la session Efbet sont invalides.');
+    }
+
+    return etat;
+  } catch (erreur) {
+    console.error('Impossible de restaurer la session Efbet.', erreur);
+    return null;
+  }
 }
 
 function actualiserTout() {
@@ -405,7 +507,8 @@ document.getElementById('boutonValiderPari').onclick = function() {
     coteTotale: coteTotale,
     gainPotentiel: mise * coteTotale,
     statut: 'En attente',
-    gain: 0
+    gain: 0,
+    resolutionA: Date.now() + 5000 + Math.random() * 4000
   };
   paris.push(nouveauPari);
   couponPari = [];
@@ -416,7 +519,7 @@ document.getElementById('boutonValiderPari').onclick = function() {
   messagePari.style.color = '#2a9d8f';
   afficherNotification('Pari validé - résultats bientôt…', 'information');
 
-  setTimeout(function() { determinerPari(nouveauPari.identifiant); }, 5000 + Math.random() * 4000);
+  setTimeout(function() { determinerPari(nouveauPari.identifiant); }, nouveauPari.resolutionA - Date.now());
 };
 
 function determinerPari(identifiantPari) {
@@ -615,7 +718,7 @@ function initialiserFiltres() {
 
 // Navigation entre les onglets
 function initialiserOnglets() {
-  const onglets = document.querySelectorAll('.bouton-onglet');
+  const onglets = document.querySelectorAll('.bouton-onglet[data-onglet]');
   for (let indice = 0; indice < onglets.length; indice++) {
     onglets[indice].onclick = function() {
       for (let indiceInterne = 0; indiceInterne < onglets.length; indiceInterne++) onglets[indiceInterne].classList.remove('actif');
@@ -834,3 +937,20 @@ function obtenirReponseAssistant(texte, contenu) {
 
   return contenu.reponseInconnue;
 }
+
+const etatEnregistre = chargerEtatSession();
+if (etatEnregistre) {
+  document.getElementById('fenetreAge').classList.add('masque');
+  document.getElementById('contenuPrincipal').classList.remove('masque');
+  demarrerApplication(etatEnregistre);
+}
+
+window.addEventListener('pageshow', function() {
+  if (document.getElementById('fenetreAge').classList.contains('masque')) {
+    try {
+      sessionStorage.removeItem(cleEtatSession);
+    } catch (erreur) {
+      console.error('Impossible de nettoyer la sauvegarde de session Efbet.', erreur);
+    }
+  }
+});
