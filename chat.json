@@ -15,7 +15,7 @@
     },
     {
       "motsCles": ["combin"],
-      "texte": "Un combiné regroupe plusieurs paris. Les cotes se multiplient. Il faut que tous les paris gagnent."
+      "texte": "Un combiné regroupe plusieurs paris. Les cotes se multiplient. Il faut que tous les paris composant le coupon soit validés pour que le combiné soit gagnant."
     },
     {
       "motsCles": ["respons", "limite", "dépendance"],
@@ -23,7 +23,7 @@
     },
     {
       "motsCles": ["crédit", "solde"],
-      "texte": "Vous avez {{credits}} crédits fictifs. Aucun argent réel."
+      "texte": "Vous avez {{credits}} crédits fictifs."
     },
     {
       "motsCles": ["pari", "paris"],
