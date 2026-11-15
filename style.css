@@ -1,20 +1,20 @@
 /* Couleurs du site */
 :root {
-  --blue: #0d47a1;
-  --blue-light: #1565c0;
-  --blue-soft: #e3f0ff;
-  --red: #d32f2f;
-  --red-hover: #b71c1c;
-  --green: #2a9d8f;
-  --white: #ffffff;
-  --grey-50: #f8fafc;
-  --grey-100: #eef2f7;
-  --grey-200: #dde5ee;
-  --grey-400: #8896a8;
-  --grey-600: #4a5768;
-  --text: #172033;
-  --radius: 12px;
-  --shadow: 0 2px 10px rgba(13, 71, 161, 0.08);
+  --bleu: #0d47a1;
+  --bleu-clair: #1565c0;
+  --bleu-pale: #e3f0ff;
+  --rouge: #d32f2f;
+  --rouge-survol: #b71c1c;
+  --vert: #2a9d8f;
+  --blanc: #ffffff;
+  --gris-50: #f8fafc;
+  --gris-100: #eef2f7;
+  --gris-200: #dde5ee;
+  --gris-400: #8896a8;
+  --gris-600: #4a5768;
+  --texte: #172033;
+  --arrondi: 12px;
+  --ombre: 0 2px 10px rgba(13, 71, 161, 0.08);
 }
 
 /* Styles de base */
@@ -26,8 +26,8 @@
 
 body {
   font-family: Arial, Helvetica, sans-serif;
-  background: var(--grey-50);
-  color: var(--text);
+  background: var(--gris-50);
+  color: var(--texte);
   font-size: 15px;
   line-height: 1.5;
 }
@@ -41,12 +41,12 @@ input, select {
   font-family: inherit;
 }
 
-.hidden {
+.masque {
   display: none !important;
 }
 
 /* Fenêtres modales */
-.modal {
+.fenetre {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
   background: rgba(13, 71, 161, 0.55);
@@ -57,51 +57,51 @@ input, select {
   padding: 20px;
 }
 
-.modal-box {
-  background: var(--white);
+.boite-fenetre {
+  background: var(--blanc);
   border-radius: 16px;
   padding: 30px;
   max-width: 420px;
   width: 100%;
-  border-top: 5px solid var(--red);
+  border-top: 5px solid var(--rouge);
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
 }
 
-.modal-box h2 {
+.boite-fenetre h2 {
   margin-bottom: 10px;
-  color: var(--blue);
+  color: var(--bleu);
 }
 
-.modal-box label {
+.boite-fenetre label {
   display: block;
   margin: 15px 0 5px;
   font-weight: bold;
   font-size: 0.9em;
 }
 
-.modal-box input,
-.modal-box select {
+.boite-fenetre input,
+.boite-fenetre select {
   width: 100%;
   padding: 12px;
-  border: 2px solid var(--grey-200);
+  border: 2px solid var(--gris-200);
   border-radius: 8px;
   font-size: 1em;
 }
 
-.modal-box input:focus,
-.modal-box select:focus {
+.boite-fenetre input:focus,
+.boite-fenetre select:focus {
   outline: none;
-  border-color: var(--blue);
+  border-color: var(--bleu);
 }
 
-.error {
-  color: var(--red);
+.erreur {
+  color: var(--rouge);
   margin-top: 10px;
   font-weight: bold;
   font-size: 0.9em;
 }
 
-.warning {
+.avertissement {
   margin-top: 15px;
   padding: 12px;
   background: #fff8e1;
@@ -112,7 +112,7 @@ input, select {
 }
 
 /* Boutons */
-.btn {
+.bouton {
   border: none;
   padding: 12px 20px;
   border-radius: 8px;
@@ -121,47 +121,47 @@ input, select {
   margin-top: 12px;
 }
 
-.btn-red {
-  background: var(--red);
+.bouton-rouge {
+  background: var(--rouge);
   color: white;
 }
 
-.btn-red:hover {
-  background: var(--red-hover);
+.bouton-rouge:hover {
+  background: var(--rouge-survol);
 }
 
-.btn-green {
-  background: var(--green);
+.bouton-vert {
+  background: var(--vert);
   color: white;
 }
 
-.btn-ghost {
+.bouton-neutre {
   background: transparent;
-  border: 2px solid var(--grey-200);
-  color: var(--grey-600);
+  border: 2px solid var(--gris-200);
+  color: var(--gris-600);
 }
 
-.btn-ghost:hover {
-  border-color: var(--blue);
-  color: var(--blue);
+.bouton-neutre:hover {
+  border-color: var(--bleu);
+  color: var(--bleu);
 }
 
-.btn-block {
+.bouton-largeur-totale {
   display: block;
   width: 100%;
 }
 
 /* En-tête */
-.header {
-  background: var(--white);
-  border-bottom: 3px solid var(--blue);
-  box-shadow: var(--shadow);
+.entete {
+  background: var(--blanc);
+  border-bottom: 3px solid var(--bleu);
+  box-shadow: var(--ombre);
   position: sticky;
   top: 0;
   z-index: 100;
 }
 
-.header-top {
+.entete-haut {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -170,20 +170,20 @@ input, select {
   margin: 0 auto;
 }
 
-.logo {
-  color: var(--blue);
+.marque {
+  color: var(--bleu);
   font-size: 1.6em;
 }
 
-.header-actions {
+.actions-entete {
   display: flex;
   gap: 10px;
   align-items: center;
 }
 
 .credits {
-  background: var(--blue-soft);
-  color: var(--blue);
+  background: var(--bleu-pale);
+  color: var(--bleu);
   padding: 8px 15px;
   border-radius: 20px;
   font-weight: bold;
@@ -191,36 +191,36 @@ input, select {
 }
 
 /* Navigation par onglets */
-.tabs {
+.navigation-onglets {
   display: flex;
   gap: 5px;
   justify-content: center;
   padding: 15px;
-  background: var(--white);
-  border-bottom: 1px solid var(--grey-200);
+  background: var(--blanc);
+  border-bottom: 1px solid var(--gris-200);
 }
 
-.tab-btn {
+.bouton-onglet {
   background: transparent;
   border: none;
   padding: 10px 20px;
   border-radius: 8px;
   font-weight: bold;
-  color: var(--grey-600);
+  color: var(--gris-600);
 }
 
-.tab-btn:hover {
-  background: var(--blue-soft);
-  color: var(--blue);
+.bouton-onglet:hover {
+  background: var(--bleu-pale);
+  color: var(--bleu);
 }
 
-.tab-btn.active {
-  background: var(--blue);
+.bouton-onglet.actif {
+  background: var(--bleu);
   color: white;
 }
 
 /* Mise en page principale */
-.main-layout {
+.mise-en-page-principale {
   display: flex;
   gap: 20px;
   max-width: 1400px;
@@ -229,12 +229,12 @@ input, select {
   align-items: flex-start;
 }
 
-.col-main {
+.colonne-principale {
   flex: 1;
   min-width: 0;
 }
 
-.col-side {
+.colonne-laterale {
   width: 350px;
   position: sticky;
   top: 100px;
@@ -244,25 +244,25 @@ input, select {
 }
 
 /* Panneaux */
-.panel {
-  background: var(--white);
-  border-radius: var(--radius);
+.panneau {
+  background: var(--blanc);
+  border-radius: var(--arrondi);
   padding: 18px;
-  box-shadow: var(--shadow);
+  box-shadow: var(--ombre);
 }
 
-.section-title {
-  color: var(--text);
+.titre-section {
+  color: var(--texte);
   font-size: 1.15em;
   margin-bottom: 15px;
 }
 
 /* Filtres */
-.filters {
-  background: var(--white);
+.filtres {
+  background: var(--blanc);
   padding: 15px;
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
+  border-radius: var(--arrondi);
+  box-shadow: var(--ombre);
   margin-bottom: 20px;
   display: flex;
   flex-wrap: wrap;
@@ -271,144 +271,144 @@ input, select {
   align-items: center;
 }
 
-.filter-chips {
+.filtres-rapides {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
 }
 
-.chip {
-  background: var(--grey-100);
+.filtre-rapide {
+  background: var(--gris-100);
   border: none;
   padding: 8px 16px;
   border-radius: 20px;
   font-weight: bold;
   font-size: 0.85em;
-  color: var(--grey-600);
+  color: var(--gris-600);
 }
 
-.chip:hover {
-  background: var(--blue-soft);
-  color: var(--blue);
+.filtre-rapide:hover {
+  background: var(--bleu-pale);
+  color: var(--bleu);
 }
 
-.chip.active {
-  background: var(--blue);
+.filtre-rapide.actif {
+  background: var(--bleu);
   color: white;
 }
 
-.filter-selects {
+.filtres-deroulants {
   display: flex;
   gap: 8px;
 }
 
 select {
   padding: 8px 12px;
-  border: 2px solid var(--grey-200);
+  border: 2px solid var(--gris-200);
   border-radius: 8px;
   font-weight: bold;
   font-size: 0.85em;
-  background: var(--white);
+  background: var(--blanc);
 }
 
 select:focus {
   outline: none;
-  border-color: var(--blue);
+  border-color: var(--bleu);
 }
 
 /* Cartes de matchs */
-.matches-grid {
+.grille-matchs {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: 15px;
 }
 
-.match-card {
-  background: var(--white);
-  border-radius: var(--radius);
+.carte-match {
+  background: var(--blanc);
+  border-radius: var(--arrondi);
   overflow: hidden;
-  box-shadow: var(--shadow);
+  box-shadow: var(--ombre);
   transition: transform 0.2s;
 }
 
-.match-card:hover {
+.carte-match:hover {
   transform: translateY(-3px);
   box-shadow: 0 6px 20px rgba(13, 71, 161, 0.15);
 }
 
-.match-image {
+.image-match {
   height: 120px;
   background-size: cover;
   background-position: center;
 }
 
-.match-body {
+.contenu-match {
   padding: 15px;
 }
 
-.match-top {
+.entete-match {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 8px;
 }
 
-.match-comp {
-  color: var(--blue);
+.competition-match {
+  color: var(--bleu);
   font-size: 0.75em;
   font-weight: bold;
   text-transform: uppercase;
 }
 
-.match-status {
+.statut-match {
   padding: 4px 10px;
   border-radius: 20px;
   font-size: 0.7em;
   font-weight: bold;
 }
 
-.status-upcoming {
-  background: var(--blue-soft);
-  color: var(--blue);
+.statut-a-venir {
+  background: var(--bleu-pale);
+  color: var(--bleu);
 }
 
-.status-live {
+.statut-direct {
   background: #ffebee;
-  color: var(--red);
+  color: var(--rouge);
 }
 
-.status-ended {
-  background: var(--grey-100);
-  color: var(--grey-600);
+.statut-termine {
+  background: var(--gris-100);
+  color: var(--gris-600);
 }
 
-.match-teams {
+.equipes-match {
   font-weight: bold;
   font-size: 1em;
   margin-bottom: 5px;
 }
 
-.match-score {
+.score-match {
   font-size: 0.85em;
-  color: var(--grey-600);
+  color: var(--gris-600);
   margin-bottom: 12px;
 }
 
-.match-score .live-score {
-  color: var(--red);
+.score-match .score-direct {
+  color: var(--rouge);
   font-size: 1.2em;
   font-weight: bold;
 }
 
 /* Boutons de cotes */
-.odds {
+.cotes {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   gap: 8px;
 }
 
-.odd-btn {
-  background: var(--grey-100);
+.bouton-cote {
+  background: var(--gris-100);
   border: 2px solid transparent;
   padding: 10px 5px;
   border-radius: 8px;
@@ -418,77 +418,77 @@ select:focus {
   gap: 3px;
 }
 
-.odd-btn:hover:not(:disabled) {
-  background: var(--blue-soft);
-  border-color: var(--blue);
+.bouton-cote:hover:not(:disabled) {
+  background: var(--bleu-pale);
+  border-color: var(--bleu);
 }
 
-.odd-btn.selected {
-  background: var(--red);
-  border-color: var(--red);
+.bouton-cote.selectionne {
+  background: var(--rouge);
+  border-color: var(--rouge);
   color: white;
 }
 
-.odd-btn:disabled {
+.bouton-cote:disabled {
   opacity: 0.4;
   cursor: not-allowed;
 }
 
-.odd-label {
+.libelle-cote {
   font-size: 0.7em;
   font-weight: bold;
-  color: var(--grey-600);
+  color: var(--gris-600);
 }
 
-.odd-btn.selected .odd-label {
+.bouton-cote.selectionne .libelle-cote {
   color: rgba(255, 255, 255, 0.9);
 }
 
-.odd-value {
+.valeur-cote {
   font-size: 1em;
   font-weight: bold;
-  color: var(--blue);
+  color: var(--bleu);
 }
 
-.odd-btn.selected .odd-value {
+.bouton-cote.selectionne .valeur-cote {
   color: white;
 }
 
-.odd-users {
+.nombre-joueurs-cote {
   font-size: 0.65em;
-  color: var(--grey-400);
+  color: var(--gris-400);
 }
 
-.odd-btn.selected .odd-users {
+.bouton-cote.selectionne .nombre-joueurs-cote {
   color: rgba(255, 255, 255, 0.8);
 }
 
 /* Bouton vidéo */
-.video-btn {
+.bouton-video {
   width: 100%;
   margin-top: 12px;
   padding: 8px;
   background: transparent;
-  border: 2px dashed var(--blue);
-  color: var(--blue);
+  border: 2px dashed var(--bleu);
+  color: var(--bleu);
   border-radius: 8px;
   font-weight: bold;
   font-size: 0.85em;
 }
 
-.video-btn:hover {
-  background: var(--blue);
+.bouton-video:hover {
+  background: var(--bleu);
   color: white;
   border-style: solid;
 }
 
 /* Coupon de paris */
-.coupon-item {
-  background: var(--grey-50);
+.selection-coupon {
+  background: var(--gris-50);
   padding: 12px;
   border-radius: 8px;
   margin-bottom: 8px;
-  border-left: 4px solid var(--red);
+  border-left: 4px solid var(--rouge);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -496,78 +496,78 @@ select:focus {
   gap: 8px;
 }
 
-.coupon-item-info {
+.infos-selection {
   flex: 1;
 }
 
-.coupon-item-title {
+.titre-selection {
   font-weight: bold;
   margin-bottom: 2px;
 }
 
-.coupon-item-choice {
-  color: var(--grey-600);
+.choix-selection {
+  color: var(--gris-600);
   font-size: 0.9em;
 }
 
-.coupon-item-odd {
+.cote-selection {
   font-weight: bold;
-  color: var(--red);
+  color: var(--rouge);
 }
 
-.coupon-item button {
+.selection-coupon button {
   background: transparent;
   border: none;
-  color: var(--grey-400);
+  color: var(--gris-400);
   font-size: 0.8em;
 }
 
-.coupon-item button:hover {
-  color: var(--red);
+.selection-coupon button:hover {
+  color: var(--rouge);
 }
 
-.coupon-summary {
+.resume-coupon {
   margin-top: 15px;
   padding-top: 15px;
-  border-top: 2px dashed var(--grey-200);
+  border-top: 2px dashed var(--gris-200);
 }
 
-.summary-line {
+.ligne-resume {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 10px;
   font-size: 0.9em;
-  color: var(--grey-600);
+  color: var(--gris-600);
 }
 
-.summary-line strong {
-  color: var(--text);
+.ligne-resume strong {
+  color: var(--texte);
 }
 
-.summary-line.highlight {
-  background: var(--blue-soft);
+.ligne-resume.mise-en-evidence {
+  background: var(--bleu-pale);
   padding: 10px;
   border-radius: 8px;
-  color: var(--blue);
+  color: var(--bleu);
   font-weight: bold;
 }
 
-.summary-line.highlight strong {
-  color: var(--red);
+.ligne-resume.mise-en-evidence strong {
+  color: var(--rouge);
   font-size: 1.1em;
 }
 
-.summary-line input {
+.ligne-resume input {
   width: 80px;
   padding: 6px;
-  border: 2px solid var(--grey-200);
+  border: 2px solid var(--gris-200);
   border-radius: 6px;
   text-align: right;
   font-weight: bold;
 }
 
-.bet-msg {
+.message-pari {
   margin-top: 10px;
   text-align: center;
   font-weight: bold;
@@ -575,41 +575,41 @@ select:focus {
 }
 
 /* Paris combinés */
-.combo {
-  background: var(--blue-soft);
+.combine {
+  background: var(--bleu-pale);
   padding: 12px;
   border-radius: 8px;
   margin-bottom: 10px;
-  border: 1px solid var(--grey-200);
+  border: 1px solid var(--gris-200);
 }
 
-.combo-title {
-  color: var(--blue);
+.titre-combine {
+  color: var(--bleu);
   font-size: 0.8em;
   font-weight: bold;
   text-transform: uppercase;
   margin-bottom: 6px;
 }
 
-.combo-pick {
+.selection-combine {
   font-size: 0.85em;
   margin-bottom: 3px;
 }
 
-.combo-footer {
+.pied-combine {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-top: 10px;
 }
 
-.combo-odd {
-  color: var(--red);
+.cote-combine {
+  color: var(--rouge);
   font-weight: bold;
 }
 
-.combo-add {
-  background: var(--blue);
+.bouton-ajout-combine {
+  background: var(--bleu);
   color: white;
   border: none;
   padding: 6px 14px;
@@ -618,28 +618,28 @@ select:focus {
   font-size: 0.8em;
 }
 
-.combo-add:hover {
-  background: var(--red);
+.bouton-ajout-combine:hover {
+  background: var(--rouge);
 }
 
 /* Matchs en direct */
-.live-player {
+.lecteur-direct {
   position: relative;
   width: 100%;
   aspect-ratio: 16 / 9;
   background: black;
-  border-radius: var(--radius);
+  border-radius: var(--arrondi);
   overflow: hidden;
   margin-bottom: 20px;
 }
 
-.live-player iframe {
+.lecteur-direct iframe {
   width: 100%;
   height: 100%;
   border: none;
 }
 
-.live-overlay {
+.superposition-direct {
   position: absolute;
   top: 15px;
   left: 15px;
@@ -648,8 +648,8 @@ select:focus {
   align-items: center;
 }
 
-.live-badge {
-  background: var(--red);
+.badge-direct {
+  background: var(--rouge);
   color: white;
   padding: 5px 12px;
   border-radius: 6px;
@@ -657,7 +657,7 @@ select:focus {
   font-size: 0.75em;
 }
 
-.live-title {
+.titre-direct {
   background: rgba(0, 0, 0, 0.7);
   color: white;
   padding: 5px 12px;
@@ -665,15 +665,15 @@ select:focus {
   font-size: 0.85em;
 }
 
-.live-list {
+.liste-direct {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 10px;
 }
 
-.live-item {
-  background: var(--white);
-  border: 2px solid var(--grey-100);
+.element-direct {
+  background: var(--blanc);
+  border: 2px solid var(--gris-100);
   border-radius: 10px;
   padding: 15px;
   cursor: pointer;
@@ -682,80 +682,80 @@ select:focus {
   align-items: center;
 }
 
-.live-item:hover {
-  border-color: var(--red);
+.element-direct:hover {
+  border-color: var(--rouge);
 }
 
-.live-item.active {
-  border-color: var(--red);
+.element-direct.actif {
+  border-color: var(--rouge);
   background: #fff5f5;
 }
 
-.live-item-teams {
+.equipes-direct {
   font-weight: bold;
 }
 
-.live-item-score {
-  color: var(--red);
+.score-element-direct {
+  color: var(--rouge);
   font-weight: bold;
   font-size: 1.1em;
 }
 
 /* Résultats */
-.result-item {
-  background: var(--white);
-  border-radius: var(--radius);
+.element-resultat {
+  background: var(--blanc);
+  border-radius: var(--arrondi);
   padding: 16px;
   margin-bottom: 12px;
-  border-left: 5px solid var(--blue);
-  box-shadow: var(--shadow);
+  border-left: 5px solid var(--bleu);
+  box-shadow: var(--ombre);
 }
 
-.result-item.win {
-  border-left-color: var(--green);
+.element-resultat.gagne {
+  border-left-color: var(--vert);
 }
 
-.result-item.lose {
-  border-left-color: var(--red);
+.element-resultat.perdu {
+  border-left-color: var(--rouge);
 }
 
-.result-item.pending {
-  border-left-color: var(--grey-400);
+.element-resultat.en-attente {
+  border-left-color: var(--gris-400);
 }
 
-.result-header {
+.entete-resultat {
   display: flex;
   justify-content: space-between;
   font-size: 0.85em;
-  color: var(--grey-600);
+  color: var(--gris-600);
   margin-bottom: 10px;
 }
 
-.result-status {
+.statut-resultat {
   font-weight: bold;
 }
 
-.result-status.win { color: var(--green); }
-.result-status.lose { color: var(--red); }
-.result-status.pending { color: var(--grey-600); }
+.statut-resultat.gagne { color: var(--vert); }
+.statut-resultat.perdu { color: var(--rouge); }
+.statut-resultat.en-attente { color: var(--gris-600); }
 
-.result-selection {
+.selection-resultat {
   font-size: 0.85em;
   padding: 4px 0;
-  color: var(--grey-600);
-  border-bottom: 1px dashed var(--grey-200);
+  color: var(--gris-600);
+  border-bottom: 1px dashed var(--gris-200);
 }
 
-.result-footer {
+.pied-resultat {
   display: flex;
   justify-content: space-between;
   padding-top: 10px;
-  border-top: 2px solid var(--grey-100);
+  border-top: 2px solid var(--gris-100);
   font-weight: bold;
   font-size: 0.9em;
 }
 
-.result-msg {
+.message-resultat {
   margin-top: 10px;
   padding: 10px;
   border-radius: 8px;
@@ -763,32 +763,32 @@ select:focus {
   font-size: 0.85em;
 }
 
-.result-msg.win {
+.message-resultat.gagne {
   background: #e8f5e9;
   color: #1b5e20;
 }
 
-.result-msg.lose {
+.message-resultat.perdu {
   background: #ffebee;
   color: #b71c1c;
 }
 
-.result-msg.pending {
-  background: var(--grey-100);
-  color: var(--grey-600);
+.message-resultat.en-attente {
+  background: var(--gris-100);
+  color: var(--gris-600);
 }
 
 /* Lecteur vidéo */
-.video-box {
+.boite-video {
   max-width: 800px;
   position: relative;
 }
 
-.close-btn {
+.bouton-fermer {
   position: absolute;
   top: 10px;
   right: 10px;
-  background: var(--red);
+  background: var(--rouge);
   color: white;
   border: none;
   min-height: 35px;
@@ -798,7 +798,7 @@ select:focus {
   z-index: 10;
 }
 
-.video-container {
+.conteneur-video {
   position: relative;
   width: 100%;
   aspect-ratio: 16 / 9;
@@ -808,14 +808,14 @@ select:focus {
   margin-top: 10px;
 }
 
-.video-container iframe {
+.conteneur-video iframe {
   width: 100%;
   height: 100%;
   border: none;
 }
 
 /* Assistant de discussion */
-.chat-toggle {
+.bouton-assistant {
   position: fixed;
   bottom: 25px;
   right: 25px;
@@ -823,18 +823,18 @@ select:focus {
   height: 60px;
   border-radius: 50%;
   border: none;
-  background: linear-gradient(135deg, var(--red), var(--blue));
+  background: linear-gradient(135deg, var(--rouge), var(--bleu));
   color: white;
   font-size: 1em;
   box-shadow: 0 5px 20px rgba(0, 0, 0, 0.25);
   z-index: 500;
 }
 
-.chat-toggle:hover {
+.bouton-assistant:hover {
   transform: scale(1.1);
 }
 
-.chat-panel {
+.panneau-assistant {
   position: fixed;
   bottom: 100px;
   right: 25px;
@@ -847,12 +847,12 @@ select:focus {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  border: 2px solid var(--blue);
+  border: 2px solid var(--bleu);
   z-index: 500;
 }
 
-.chat-header {
-  background: linear-gradient(135deg, var(--blue), var(--red));
+.entete-assistant {
+  background: linear-gradient(135deg, var(--bleu), var(--rouge));
   color: white;
   padding: 15px;
   display: flex;
@@ -860,12 +860,12 @@ select:focus {
   align-items: center;
 }
 
-.chat-subtitle {
+.sous-titre-assistant {
   font-size: 0.75em;
   opacity: 0.85;
 }
 
-.chat-close {
+.fermer-assistant {
   background: transparent;
   border: none;
   color: white;
@@ -873,17 +873,17 @@ select:focus {
   padding: 6px;
 }
 
-.chat-messages {
+.messages-assistant {
   flex: 1;
   overflow-y: auto;
   padding: 15px;
-  background: var(--grey-50);
+  background: var(--gris-50);
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
-.message {
+.message-discussion {
   padding: 10px 14px;
   border-radius: 14px;
   max-width: 85%;
@@ -891,33 +891,33 @@ select:focus {
   line-height: 1.4;
 }
 
-.message.bot {
+.message-discussion.assistant {
   background: white;
-  color: var(--text);
+  color: var(--texte);
   align-self: flex-start;
   border-bottom-left-radius: 4px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
-.message.user {
-  background: var(--blue);
+.message-discussion.utilisateur {
+  background: var(--bleu);
   color: white;
   align-self: flex-end;
   border-bottom-right-radius: 4px;
 }
 
-.chat-suggestions {
+.suggestions-assistant {
   display: flex;
   gap: 6px;
   padding: 10px;
   overflow-x: auto;
   background: white;
-  border-top: 1px solid var(--grey-100);
+  border-top: 1px solid var(--gris-100);
 }
 
-.chat-suggestions button {
-  background: var(--blue-soft);
-  color: var(--blue);
+.suggestions-assistant button {
+  background: var(--bleu-pale);
+  color: var(--bleu);
   border: none;
   padding: 6px 12px;
   border-radius: 20px;
@@ -926,39 +926,39 @@ select:focus {
   white-space: nowrap;
 }
 
-.chat-suggestions button:hover {
-  background: var(--blue);
+.suggestions-assistant button:hover {
+  background: var(--bleu);
   color: white;
 }
 
-.chat-form {
+.formulaire-assistant {
   display: flex;
   gap: 6px;
   padding: 12px;
-  border-top: 2px solid var(--grey-100);
+  border-top: 2px solid var(--gris-100);
 }
 
-.chat-form input {
+.formulaire-assistant input {
   flex: 1;
   padding: 10px;
-  border: 2px solid var(--grey-200);
+  border: 2px solid var(--gris-200);
   border-radius: 8px;
   font-size: 0.9em;
 }
 
-.chat-form input:focus {
+.formulaire-assistant input:focus {
   outline: none;
-  border-color: var(--blue);
+  border-color: var(--bleu);
 }
 
-.chat-form .btn {
+.formulaire-assistant .bouton {
   margin: 0;
   padding: 10px 16px;
   font-size: 0.85em;
 }
 
 /* Notifications */
-.toast-container {
+.conteneur-notifications {
   position: fixed;
   bottom: 25px;
   left: 25px;
@@ -968,20 +968,20 @@ select:focus {
   z-index: 800;
 }
 
-.toast {
+.notification {
   background: white;
   padding: 14px 20px;
   border-radius: 10px;
   box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
   font-weight: bold;
   font-size: 0.9em;
-  border-left: 5px solid var(--green);
+  border-left: 5px solid var(--vert);
   max-width: 320px;
   animation: slideIn 0.3s;
 }
 
-.toast.error { border-left-color: var(--red); }
-.toast.info { border-left-color: var(--blue); }
+.notification.erreur { border-left-color: var(--rouge); }
+.notification.information { border-left-color: var(--bleu); }
 
 @keyframes slideIn {
   from { transform: translateX(-120%); opacity: 0; }
@@ -989,50 +989,50 @@ select:focus {
 }
 
 /* Pied de page */
-.footer {
+.pied-page {
   text-align: center;
   padding: 25px;
-  color: var(--grey-600);
+  color: var(--gris-600);
   font-size: 0.85em;
-  border-top: 1px solid var(--grey-200);
+  border-top: 1px solid var(--gris-200);
   margin-top: 30px;
 }
 
-.footer-small {
+.note-pied {
   font-size: 0.85em;
   margin-top: 5px;
 }
 
 /* Adaptation aux écrans mobiles et tablettes */
 @media (max-width: 1024px) {
-  .main-layout {
+  .mise-en-page-principale {
     flex-direction: column;
   }
-  .col-side {
+  .colonne-laterale {
     width: 100%;
     position: static;
   }
 }
 
 @media (max-width: 640px) {
-  .header-top {
+  .entete-haut {
     flex-wrap: wrap;
   }
-  .tabs {
+  .navigation-onglets {
     flex-wrap: wrap;
   }
-  .filters {
+  .filtres {
     flex-direction: column;
     align-items: stretch;
   }
-  .filter-selects {
+  .filtres-deroulants {
     flex-direction: column;
   }
-  .chat-panel {
+  .panneau-assistant {
     width: calc(100vw - 30px);
     right: 15px;
   }
-  .main-layout {
+  .mise-en-page-principale {
     padding: 0 10px;
   }
 }
