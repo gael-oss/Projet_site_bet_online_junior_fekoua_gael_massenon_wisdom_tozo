@@ -726,12 +726,45 @@ function ouvrirVideo(identifiantMatch) {
 }
 
 // Assistant de discussion
+async function chargerContenuAssistant() {
+  const reponse = await fetch('../js/chat.json');
+  if (!reponse.ok) {
+    throw new Error('Impossible de charger js/chat.json : ' + reponse.status);
+  }
+
+  const contenu = await reponse.json();
+  if (
+    typeof contenu.messageInitial !== 'string' ||
+    typeof contenu.reponseInconnue !== 'string' ||
+    !Array.isArray(contenu.reponses) ||
+    contenu.reponses.some(function(element) {
+      return !element ||
+        typeof element !== 'object' ||
+        !Array.isArray(element.motsCles) ||
+        typeof element.texte !== 'string' ||
+        element.motsCles.some(function(mot) { return typeof mot !== 'string'; });
+    })
+  ) {
+    throw new Error('Le contenu de js/chat.json est invalide.');
+  }
+
+  return contenu;
+}
+
 function initialiserAssistant() {
   const boutonBascule = document.getElementById('boutonAssistant');
   const panneau = document.getElementById('panneauAssistant');
   const formulaire = document.getElementById('formulaireAssistant');
   const champSaisie = document.getElementById('champMessageAssistant');
   const messages = document.getElementById('messagesAssistant');
+  const chargementReponses = chargerContenuAssistant().then(function(contenu) {
+    ajouterMessageDiscussion(contenu.messageInitial, 'assistant');
+    return contenu;
+  }).catch(function(erreur) {
+    console.error(erreur);
+    ajouterMessageDiscussion('Les réponses de l’assistant sont indisponibles pour le moment.', 'assistant');
+    return null;
+  });
 
   boutonBascule.onclick = function() { panneau.classList.toggle('masque'); };
   document.getElementById('boutonFermerAssistant').onclick = function() { panneau.classList.add('masque'); };
@@ -745,7 +778,7 @@ function initialiserAssistant() {
     };
   }
 
-  formulaire.onsubmit = function(evenement) {
+  formulaire.onsubmit = async function(evenement) {
     evenement.preventDefault();
     const question = champSaisie.value.trim();
     if (!question) return;
@@ -754,8 +787,10 @@ function initialiserAssistant() {
     champSaisie.value = '';
 
     // Attend un instant avant la réponse
-    setTimeout(function() {
-      const reponse = obtenirReponseAssistant(question);
+    setTimeout(async function() {
+      const contenu = await chargementReponses;
+      if (!contenu) return;
+      const reponse = obtenirReponseAssistant(question, contenu);
       ajouterMessageDiscussion(reponse, 'assistant');
     }, 500);
   };
@@ -769,36 +804,15 @@ function initialiserAssistant() {
   }
 }
 
-function obtenirReponseAssistant(texte) {
+function obtenirReponseAssistant(texte, contenu) {
   const texteMinuscule = texte.toLowerCase();
 
-  if (texteMinuscule.indexOf('bonjour') !== -1 || texteMinuscule.indexOf('salut') !== -1 || texteMinuscule.indexOf('hello') !== -1) {
-    return 'Bonjour. Comment puis-je vous aider ? Je peux expliquer les cotes, les combinés et le jeu responsable.';
-  }
-  if (texteMinuscule.indexOf('age') !== -1 || texteMinuscule.indexOf('âge') !== -1 || texteMinuscule.indexOf('18') !== -1 || texteMinuscule.indexOf('mineur') !== -1) {
-    return 'Efbet est réservé aux personnes majeures (18 ans et +). La date de naissance est vérifiée à la première visite.';
-  }
-  if (texteMinuscule.indexOf('cote') !== -1 || texteMinuscule.indexOf('odd') !== -1) {
-    return 'Une cote multipliée par votre mise donne votre gain potentiel. Exemple : cote 2.50 sur 10 crédits donne 25 crédits.';
-  }
-  if (texteMinuscule.indexOf('combin') !== -1) {
-    return 'Un combiné regroupe plusieurs paris. Les cotes se multiplient. Il faut que tous les paris gagnent.';
-  }
-  if (texteMinuscule.indexOf('respons') !== -1 || texteMinuscule.indexOf('limite') !== -1 || texteMinuscule.indexOf('dépendance') !== -1) {
-    return 'Les paris comportent des risques de dépendance. Jouez avec modération. Les crédits utilisés ici sont fictifs.';
-  }
-  if (texteMinuscule.indexOf('crédit') !== -1 || texteMinuscule.indexOf('solde') !== -1) {
-    return 'Vous avez ' + formaterNombre(creditsFictifs) + ' crédits fictifs. Aucun argent réel.';
-  }
-  if (texteMinuscule.indexOf('pari') !== -1 || texteMinuscule.indexOf('paris') !== -1) {
-    return 'Pour parier : 1) Choisissez un match 2) Cliquez sur une cote 3) Vérifiez le coupon 4) Entrez la mise 5) Validez.';
-  }
-  if (texteMinuscule.indexOf('direct') !== -1 || texteMinuscule.indexOf('direct') !== -1 || texteMinuscule.indexOf('vidéo') !== -1) {
-    return 'Cliquez sur Live pour voir les matchs en direct, ou sur Regarder le résumé sur un match.';
-  }
-  if (texteMinuscule.indexOf('merci') !== -1) {
-    return 'Avec plaisir. Bonne chance !';
+  for (let indice = 0; indice < contenu.reponses.length; indice++) {
+    const element = contenu.reponses[indice];
+    if (element.motsCles.some(function(mot) { return texteMinuscule.indexOf(mot) !== -1; })) {
+      return element.texte.replace('{{credits}}', formaterNombre(creditsFictifs));
+    }
   }
 
-  return 'Je n\'ai pas compris. Essayez : "les cotes", "combiné", "âge minimum", "jeu responsable".';
+  return contenu.reponseInconnue;
 }
