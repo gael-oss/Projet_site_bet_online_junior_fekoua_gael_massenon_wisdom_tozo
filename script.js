@@ -18,9 +18,9 @@ const videosParAffiche = {
 
 // Images par sport
 const images = {
-  Football: 'https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=600&q=70',
-  Basketball: 'https://images.unsplash.com/photo-1546519638-68e109498ffc?w=600&q=70',
-  Tennis: 'https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?w=600&q=70'
+  Football: '../img/football.avif',
+  Basketball: '../img/basketball.jpg',
+  Tennis: '../img/tennis.jpg'
 };
 
 // Fonctions utilitaires
