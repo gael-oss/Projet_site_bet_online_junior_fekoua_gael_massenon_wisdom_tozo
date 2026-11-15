@@ -1,98 +1,204 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Efbet - Paris sportifs (fictif)</title>
-    <link rel="stylesheet" href="../css/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Efbet - Paris sportifs fictifs</title>
+  <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
 
-    <!-- ===== MODAL DE VÉRIFICATION D'ÂGE ===== -->
-    <div id="ageModal" class="modal">
-        <div class="modal-content">
-            <h2>Efbet</h2>
-            <p>Ce site est réservé aux personnes majeures (18 ans et plus).</p>
-            <label for="birthdate">Votre date de naissance :</label>
-            <input type="date" id="birthdate">
-            <button id="checkAgeBtn">Entrer</button>
-            <p id="ageError" class="error"></p>
-            <p class="warning">Jouer comporte des risques : endettement, dépendance... Jouez avec des crédits fictifs.</p>
+  <!-- ================= MODALE DE VÉRIFICATION D'ÂGE ================= -->
+  <div id="ageModal" class="modal">
+    <div class="modal-box">
+      <h2>Efbet</h2>
+      <p>Ce site est réservé aux <strong>personnes majeures (18 ans et +)</strong>.</p>
+
+      <label for="birthdate">Votre date de naissance :</label>
+      <input type="date" id="birthdate">
+
+      <button id="checkAgeBtn" class="btn btn-red">Entrer</button>
+      <p id="ageError" class="error"></p>
+
+      <p class="warning">
+        Attention : jouer comporte des risques de dépendance et d'isolement. Aucun argent réel n'est utilisé ici.
+      </p>
+    </div>
+  </div>
+
+  <!-- ================= SITE PRINCIPAL ================= -->
+  <div id="mainContent" class="hidden">
+
+    <!-- ---------- HEADER ---------- -->
+    <header class="header">
+      <div class="header-top">
+        <h1 class="logo">Efbet</h1>
+        <div class="header-actions">
+          <span id="creditsDisplay" class="credits">1000 crédits</span>
         </div>
+      </div>
+    </header>
+
+    <!-- ---------- NAVIGATION PAR ONGLETS ---------- -->
+    <nav class="tabs">
+      <button class="tab-btn active" data-tab="home">Accueil</button>
+      <button class="tab-btn" data-tab="live">Live</button>
+      <button class="tab-btn" data-tab="history">Mes paris</button>
+    </nav>
+
+    <!-- ---------- CONTENU PRINCIPAL ---------- -->
+    <main class="main-layout">
+
+      <!-- COLONNE GAUCHE : matchs / live / historique -->
+      <section class="col-main">
+
+        <!-- ==== VUE ACCUEIL ==== -->
+        <div id="tab-home" class="tab-content active">
+          <!-- Filtres -->
+          <div class="filters">
+            <div class="filter-chips" id="sportChips">
+              <button class="chip active" data-sport="all">Tous</button>
+              <button class="chip" data-sport="Football">Football</button>
+              <button class="chip" data-sport="Basketball">Basketball</button>
+              <button class="chip" data-sport="Tennis">Tennis</button>
+            </div>
+            <div class="filter-selects">
+              <select id="compFilter">
+                <option value="all">Toutes compétitions</option>
+              </select>
+              <select id="statusFilter">
+                <option value="all">Tous statuts</option>
+                <option value="À venir">À venir</option>
+                <option value="En cours">En cours</option>
+                <option value="Terminé">Terminé</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Matchs -->
+          <h2 class="section-title">Matchs populaires</h2>
+          <div id="matchesContainer" class="matches-grid"></div>
+        </div>
+
+        <!-- ==== VUE LIVE ==== -->
+        <div id="tab-live" class="tab-content hidden">
+          <h2 class="section-title">En direct</h2>
+
+          <div class="live-player">
+            <iframe id="liveIframe" allowfullscreen
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
+            </iframe>
+            <div class="live-overlay">
+              <span class="live-badge">LIVE</span>
+              <span id="liveTitle" class="live-title">Aucun match sélectionné</span>
+              <a id="liveSearchLink" class="btn btn-red" style="display:none"
+                target="_blank" rel="noopener noreferrer">Rechercher cette affiche</a>
+            </div>
+          </div>
+
+          <div id="liveList" class="live-list"></div>
+        </div>
+
+        <!-- ==== VUE HISTORIQUE ==== -->
+        <div id="tab-history" class="tab-content hidden">
+          <h2 class="section-title">Mes paris</h2>
+          <div id="resultsContainer"></div>
+        </div>
+
+      </section>
+
+      <!-- COLONNE DROITE : coupon -->
+      <aside class="col-side">
+        <div class="panel coupon-panel">
+          <h2 class="section-title">Mon coupon</h2>
+          <div id="couponItems"></div>
+
+          <div class="coupon-summary">
+            <div class="summary-line">
+              <span>Sélections</span>
+              <strong id="couponCount">0</strong>
+            </div>
+            <div class="summary-line">
+              <span>Cote totale</span>
+              <strong id="totalOdd">-</strong>
+            </div>
+            <div class="summary-line">
+              <span>Mise</span>
+              <input type="number" id="stakeInput" min="1" value="10">
+            </div>
+            <div class="summary-line highlight">
+              <span>Gain potentiel</span>
+              <strong id="potentialWin">0</strong>
+            </div>
+          </div>
+
+          <button id="confirmBetBtn" class="btn btn-green btn-block">Valider le pari</button>
+          <p id="betMessage" class="bet-msg"></p>
+        </div>
+
+        <div class="panel">
+          <h2 class="section-title">Combinés du jour</h2>
+          <div id="combosContainer"></div>
+        </div>
+      </aside>
+
+    </main>
+
+    <footer class="footer">
+      <p>© 2026 Efbet - Simulation. Crédits fictifs uniquement, aucun argent réel.</p>
+      <p class="footer-small">Le jeu peut entraîner une dépendance. Fixez-vous des limites.</p>
+    </footer>
+  </div>
+
+  <!-- ================= MODALE VIDÉO YOUTUBE ================= -->
+  <div id="videoModal" class="modal hidden">
+    <div class="modal-box video-box">
+      <button id="closeVideo" class="close-btn">Fermer</button>
+      <div class="video-container">
+        <iframe id="videoIframe" allowfullscreen
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
+        </iframe>
+      </div>
+      <h3 id="videoTitle">Résumé du match</h3>
+      <a id="videoSearchLink" class="btn btn-red" style="display:none"
+        target="_blank" rel="noopener noreferrer">Rechercher cette affiche sur YouTube</a>
+    </div>
+  </div>
+
+  <!-- ================= CHATBOT ================= -->
+  <button id="chatToggle" class="chat-toggle">Chat</button>
+
+  <div id="chatPanel" class="chat-panel hidden">
+    <div class="chat-header">
+      <div>
+        <strong>Assistant Efbet</strong>
+        <p class="chat-subtitle">Posez vos questions sur les paris</p>
+      </div>
+      <button id="chatClose" class="chat-close">Fermer</button>
     </div>
 
-    <!-- ===== CONTENU PRINCIPAL (caché jusqu'à validation) ===== -->
-    <div id="mainContent" class="hidden">
-
-        <!-- HEADER + BANNIÈRE DÉFILANTE -->
-        <header>
-            <div class="header-top">
-                <h1>Efbet</h1>
-                <div class="user-info">
-                    <span id="userCredits">Crédits : 1000</span>
-                    <button id="logoutBtn">Déconnexion</button>
-                </div>
-            </div>
-            <div class="banner">
-                <p id="bannerText"> Offre de bienvenue : 1000 crédits fictifs offerts ! </p>
-            </div>
-        </header>
-
-        <main>
-            <!-- FILTRES -->
-            <section class="filters">
-                <h2>Filtres</h2>
-                <label>Sport :
-                    <select id="sportFilter">
-                        <option value="all">Tous</option>
-                        <option value="Football">Football</option>
-                        <option value="Basketball">Basketball</option>
-                        <option value="Tennis">Tennis</option>
-                    </select>
-                </label>
-                <label>Statut :
-                    <select id="statusFilter">
-                        <option value="all">Tous</option>
-                        <option value="À venir">À venir</option>
-                        <option value="En cours">En cours</option>
-                        <option value="Terminé">Terminé</option>
-                    </select>
-                </label>
-            </section>
-
-            <!-- MATCHS -->
-            <section class="matches">
-                <h2>Matchs</h2>
-                <div id="matchesContainer"></div>
-            </section>
-
-            <!-- COUPON DE PARIS -->
-            <aside class="coupon">
-                <h2>Mon coupon</h2>
-                <div id="couponItems">
-                    <p class="empty">Aucune sélection.</p>
-                </div>
-                <label>Mise (crédits) :
-                    <input type="number" id="stakeInput" min="1" value="10">
-                </label>
-                <p>Gain potentiel : <span id="potentialWin">0</span> crédits</p>
-                <button id="confirmBetBtn">Valider le pari</button>
-                <p id="betMessage"></p>
-            </aside>
-
-            <!-- RÉSULTATS -->
-            <section class="results">
-                <h2>Mes paris</h2>
-                <div id="resultsContainer"><p class="empty">Aucun pari pour le moment.</p></div>
-            </section>
-        </main>
-
-        <footer>
-            <p>&copy; 2026 Efbet — Simulation, crédits fictifs uniquement.</p>
-            <p>Rappel : le jeu peut entraîner une dépendance. Fixez-vous des limites.</p>
-        </footer>
+    <div id="chatMessages" class="chat-messages">
+      <div class="message bot">
+        Bonjour. Je suis l'assistant Efbet. Je peux répondre à vos questions sur les cotes, les combinés, l'âge minimum et le jeu responsable.
+      </div>
     </div>
 
-    <script src="../js/script.js"></script>
+    <div class="chat-suggestions">
+      <button data-q="Comment fonctionnent les cotes ?">Les cotes</button>
+      <button data-q="Quel est l'âge minimum ?">Âge minimum</button>
+      <button data-q="C'est quoi un combiné ?">Combiné</button>
+      <button data-q="Comment jouer responsable ?">Jeu responsable</button>
+    </div>
+
+    <form id="chatForm" class="chat-form">
+      <input type="text" id="chatInput" placeholder="Votre message…" autocomplete="off">
+      <button type="submit" class="btn btn-red">Envoyer</button>
+    </form>
+  </div>
+
+  <!-- ================= TOASTS (notifications) ================= -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <script src="../js/script.js"></script>
 </body>
 </html>
