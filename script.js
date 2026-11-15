@@ -1,836 +1,802 @@
-/* ============================================================
-   EFBET - Code simple et compréhensible
-   ============================================================ */
+// Logique principale du site
 
-/* ---------- VARIABLES GLOBALES ---------- */
-let credits = 1000;
-let matches = [];
-let coupon = [];
-let bets = [];
-let combos = [];
-let currentFilters = { sport: 'all', competition: 'all', status: 'all' };
-let liveMatchId = null;
+// État du site
+let creditsFictifs = 1000;
+let matchs = [];
+let couponPari = [];
+let paris = [];
+let combines = [];
+let filtresActuels = { sport: 'all', competition: 'all', statut: 'all' };
+let identifiantMatchDirect = null;
 
-/* ---------- VIDÉOS YOUTUBE PAR AFFICHE ---------- */
-const matchVideos = {
+// Vidéos associées aux affiches
+const videosParAffiche = {
   'barca|real madrid': 'https://www.youtube.com/embed/OOKOzx_kHQ8',
   'lyon|marseille': 'https://www.youtube.com/embed/dIVvfx5sx_4',
   'celtics|lakers': 'https://www.youtube.com/embed/MNdMmqaMRbU'
 };
 
-/* ---------- IMAGES PAR SPORT ---------- */
+// Images par sport
 const images = {
   Football: 'https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=600&q=70',
   Basketball: 'https://images.unsplash.com/photo-1546519638-68e109498ffc?w=600&q=70',
   Tennis: 'https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?w=600&q=70'
 };
 
-/* ---------- PETITS OUTILS ---------- */
-function randomInt(min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
+// Fonctions utilitaires
+function nombreAleatoire(minimum, maximum) {
+  return Math.floor(Math.random() * (maximum - minimum + 1)) + minimum;
 }
 
-function randomPick(arr) {
-  return arr[Math.floor(Math.random() * arr.length)];
+function choisirAleatoirement(tableau) {
+  return tableau[Math.floor(Math.random() * tableau.length)];
 }
 
-function normalizeTeamName(name) {
-  return name.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+function normaliserNomEquipe(nom) {
+  return nom.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
 }
 
-function getMatchVideoUrl(match) {
-  const teams = [normalizeTeamName(match.team1), normalizeTeamName(match.team2)].sort();
-  return matchVideos[teams.join('|')] || '';
+function obtenirUrlVideoMatch(rencontre) {
+  const equipes = [normaliserNomEquipe(rencontre.equipeA), normaliserNomEquipe(rencontre.equipeB)].sort();
+  return videosParAffiche[equipes.join('|')] || '';
 }
 
-function getMatchSearchUrl(match) {
-  const query = match.team1 + ' vs ' + match.team2 + ' match highlights';
-  return 'https://www.youtube.com/results?search_query=' + encodeURIComponent(query);
+function obtenirUrlRechercheMatch(rencontre) {
+  const recherche = rencontre.equipeA + ' vs ' + rencontre.equipeB + ' match highlights';
+  return 'https://www.youtube.com/results?search_query=' + encodeURIComponent(recherche);
 }
 
-function formatNumber(n) {
+function formaterNombre(n) {
   return n.toLocaleString('fr-FR', { maximumFractionDigits: 2 });
 }
 
-function showToast(message, type) {
-  const container = document.getElementById('toastContainer');
-  const toast = document.createElement('div');
-  toast.className = 'toast ' + (type || '');
-  toast.textContent = message;
-  container.appendChild(toast);
-  setTimeout(function() { toast.remove(); }, 4000);
+function afficherNotification(message, typePari) {
+  const conteneur = document.getElementById('notificationsTemporaires');
+  const notification = document.createElement('div');
+  notification.className = 'notification ' + (typePari || '');
+  notification.textContent = message;
+  conteneur.appendChild(notification);
+  setTimeout(function() { notification.remove(); }, 4000);
 }
 
-/* ============================================================
-   1. VÉRIFICATION DE L'ÂGE
-   ============================================================ */
-document.getElementById('checkAgeBtn').onclick = function() {
-  const dateStr = document.getElementById('birthdate').value;
-  const errorP = document.getElementById('ageError');
+// Vérification de l'âge
+document.getElementById('boutonAgeValider').onclick = function() {
+  const dateNaissanceTexte = document.getElementById('dateNaissance').value;
+  const messageErreur = document.getElementById('erreurAge');
 
-  if (!dateStr) {
-    errorP.textContent = 'Merci de renseigner votre date de naissance.';
+  if (!dateNaissanceTexte) {
+    messageErreur.textContent = 'Merci de renseigner votre date de naissance.';
     return;
   }
 
-  // Calcul de l'âge
-  const birth = new Date(dateStr);
-  const today = new Date();
-  let age = today.getFullYear() - birth.getFullYear();
-  const m = today.getMonth() - birth.getMonth();
-  if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) {
+  // Calcule l'âge à partir de la date de naissance
+  const naissance = new Date(dateNaissanceTexte);
+  const dateAujourdhui = new Date();
+  let age = dateAujourdhui.getFullYear() - naissance.getFullYear();
+  const differenceMois = dateAujourdhui.getMonth() - naissance.getMonth();
+  if (differenceMois < 0 || (differenceMois === 0 && dateAujourdhui.getDate() < naissance.getDate())) {
     age--;
   }
 
   if (age < 18) {
-    errorP.textContent = 'Accès refusé : vous devez avoir 18 ans ou plus.';
+    messageErreur.textContent = 'Accès refusé : vous devez avoir 18 ans ou plus.';
     return;
   }
 
-  // OK : on cache la modale et on affiche le site
-  document.getElementById('ageModal').classList.add('hidden');
-  document.getElementById('mainContent').classList.remove('hidden');
-  startApp();
-  showToast('Bienvenue ! 1000 crédits fictifs offerts.', 'info');
+  // Affiche le site après validation de l'âge
+  document.getElementById('fenetreAge').classList.add('masque');
+  document.getElementById('contenuPrincipal').classList.remove('masque');
+  demarrerApplication();
+  afficherNotification('Bienvenue ! 1000 crédits fictifs offerts.', 'information');
 };
 
-/* ============================================================
-   2. DÉMARRAGE
-   ============================================================ */
-function startApp() {
-  createMatches(10);
-  createCombos();
-  updateAll();
-  setupTabs();
-  setupFilters();
-  setupChatbot();
-  setupVideoModal();
-  startSimulation();
+// Démarrage du site
+function demarrerApplication() {
+  creerMatchs(10);
+  creerCombines();
+  actualiserTout();
+  initialiserOnglets();
+  initialiserFiltres();
+  initialiserAssistant();
+  initialiserLecteurVideo();
+  lancerSimulation();
 }
 
-function updateAll() {
-  updateCredits();
-  updateMatches();
-  updateCombos();
-  updateCoupon();
-  updateResults();
+function actualiserTout() {
+  actualiserCredits();
+  actualiserMatchs();
+  actualiserCombines();
+  actualiserCoupon();
+  actualiserResultats();
 }
 
-/* ============================================================
-   3. GÉNÉRATION DES MATCHS
-   ============================================================ */
-const sportsList = ['Football', 'Basketball', 'Tennis'];
-const teamsList = {
+// Génération des matchs
+const sportsDisponibles = ['Football', 'Basketball', 'Tennis'];
+const equipesParSport = {
   Football: ['PSG', 'Marseille', 'Lyon', 'Monaco', 'Real Madrid', 'Barça'],
   Basketball: ['Lakers', 'Bulls', 'Warriors', 'Celtics'],
   Tennis: ['Nadal', 'Federer', 'Djokovic', 'Alcaraz']
 };
-const compsList = {
+const competitionsParSport = {
   Football: ['Ligue 1', 'Champions League', 'La Liga'],
   Basketball: ['NBA', 'EuroLeague'],
   Tennis: ['ATP Masters', 'Grand Slam']
 };
 
-function createMatches(count) {
-  matches = [];
-  const now = Date.now();
+function creerMatchs(nombre) {
+  matchs = [];
+  const maintenant = Date.now();
 
-  for (let i = 1; i <= count; i++) {
-    const sport = randomPick(sportsList);
-    const teams = teamsList[sport];
+  for (let indice = 1; indice <= nombre; indice++) {
+    const sport = choisirAleatoirement(sportsDisponibles);
+    const equipes = equipesParSport[sport];
 
-    let t1 = randomPick(teams);
-    let t2 = randomPick(teams);
-    while (t2 === t1) t2 = randomPick(teams);
+    let equipeA = choisirAleatoirement(equipes);
+    let equipeB = choisirAleatoirement(equipes);
+    while (equipeB === equipeA) equipeB = choisirAleatoirement(equipes);
 
-    matches.push({
-      id: i,
+    matchs.push({
+      identifiant: indice,
       sport: sport,
-      competition: randomPick(compsList[sport]),
-      team1: t1,
-      team2: t2,
-      startTime: now + randomInt(15, 120) * 1000,
-      duration: 3 * 60 * 1000,
-      score1: 0,
-      score2: 0,
-      status: 'À venir',
-      odds: {
-        team1: (1.5 + Math.random() * 2).toFixed(2),
-        draw: (3 + Math.random() * 2).toFixed(2),
-        team2: (1.5 + Math.random() * 2).toFixed(2)
+      competition: choisirAleatoirement(competitionsParSport[sport]),
+      equipeA: equipeA,
+      equipeB: equipeB,
+      heureDebut: maintenant + nombreAleatoire(15, 120) * 1000,
+      duree: 3 * 60 * 1000,
+      scoreA: 0,
+      scoreB: 0,
+      statut: 'À venir',
+      cotes: {
+        equipeA: (1.5 + Math.random() * 2).toFixed(2),
+        nul: (3 + Math.random() * 2).toFixed(2),
+        equipeB: (1.5 + Math.random() * 2).toFixed(2)
       },
-      users: {
-        team1: randomInt(50, 800),
-        draw: randomInt(20, 300),
-        team2: randomInt(50, 800)
+      utilisateurs: {
+        equipeA: nombreAleatoire(50, 800),
+        nul: nombreAleatoire(20, 300),
+        equipeB: nombreAleatoire(50, 800)
       },
       image: images[sport]
     });
   }
 }
 
-/* ============================================================
-   4. GÉNÉRATION DES COMBINÉS
-   ============================================================ */
-function createCombos() {
-  combos = [];
-  for (let i = 0; i < 3; i++) {
-    const picks = [];
-    const used = [];
+// Génération des combinés
+function creerCombines() {
+  combines = [];
+  for (let indice = 0; indice < 3; indice++) {
+    const selections = [];
+    const identifiantsUtilises = [];
 
-    while (picks.length < 2) {
-      const m = randomPick(matches);
-      if (used.indexOf(m.id) !== -1) continue;
-      used.push(m.id);
+    while (selections.length < 2) {
+      const rencontre = choisirAleatoirement(matchs);
+      if (identifiantsUtilises.indexOf(rencontre.identifiant) !== -1) continue;
+      identifiantsUtilises.push(rencontre.identifiant);
 
-      const type = randomPick(['team1', 'draw', 'team2']);
-      const label = type === 'team1' ? m.team1 : type === 'team2' ? m.team2 : 'Match nul';
+      const typePari = choisirAleatoirement(['equipeA', 'nul', 'equipeB']);
+      const libelle = typePari === 'equipeA' ? rencontre.equipeA : typePari === 'equipeB' ? rencontre.equipeB : 'Match nul';
 
-      picks.push({
-        matchId: m.id,
-        type: type,
-        odd: parseFloat(m.odds[type]),
-        label: m.team1 + ' vs ' + m.team2 + ' → ' + label
+      selections.push({
+        identifiantMatch: rencontre.identifiant,
+        typePari: typePari,
+        cote: parseFloat(rencontre.cotes[typePari]),
+        libelle: rencontre.equipeA + ' vs ' + rencontre.equipeB + ' → ' + libelle
       });
     }
 
-    let total = 1;
-    for (let j = 0; j < picks.length; j++) {
-      total = total * picks[j].odd;
+    let coteTotale = 1;
+    for (let indiceInterne = 0; indiceInterne < selections.length; indiceInterne++) {
+      coteTotale = coteTotale * selections[indiceInterne].cote;
     }
-    combos.push({ picks: picks, totalOdd: total.toFixed(2) });
+    combines.push({ selections: selections, coteTotale: coteTotale.toFixed(2) });
   }
 }
 
-/* ============================================================
-   5. AFFICHAGE DES MATCHS
-   ============================================================ */
-function updateMatches() {
-  const container = document.getElementById('matchesContainer');
+// Affichage des matchs
+function actualiserMatchs() {
+  const conteneur = document.getElementById('listeMatchs');
 
-  const filtered = matches.filter(function(m) {
-    const okSport = currentFilters.sport === 'all' || m.sport === currentFilters.sport;
-    const okComp = currentFilters.competition === 'all' || m.competition === currentFilters.competition;
-    const okStatus = currentFilters.status === 'all' || m.status === currentFilters.status;
-    return okSport && okComp && okStatus;
+  const matchsFiltres = matchs.filter(function(rencontre) {
+    const sportCorrespond = filtresActuels.sport === 'all' || rencontre.sport === filtresActuels.sport;
+    const competitionCorrespond = filtresActuels.competition === 'all' || rencontre.competition === filtresActuels.competition;
+    const statutCorrespond = filtresActuels.statut === 'all' || rencontre.statut === filtresActuels.statut;
+    return sportCorrespond && competitionCorrespond && statutCorrespond;
   });
 
-  if (filtered.length === 0) {
-    container.innerHTML = '<p style="padding:30px;text-align:center;color:#8896a8">Aucun match ne correspond.</p>';
+  if (matchsFiltres.length === 0) {
+    conteneur.innerHTML = '<p style="padding:30px;text-align:center;color:#8896a8">Aucun match ne correspond.</p>';
     return;
   }
 
-  container.innerHTML = '';
-  for (let i = 0; i < filtered.length; i++) {
-    container.innerHTML += buildMatchCard(filtered[i]);
+  conteneur.innerHTML = '';
+  for (let indice = 0; indice < matchsFiltres.length; indice++) {
+    conteneur.innerHTML += creerCarteMatch(matchsFiltres[indice]);
   }
 
-  // Attacher les événements aux boutons
-  const oddButtons = document.querySelectorAll('.odd-btn');
-  for (let i = 0; i < oddButtons.length; i++) {
-    oddButtons[i].onclick = function() {
-      const matchId = parseInt(this.dataset.match);
-      const type = this.dataset.type;
-      toggleCoupon(matchId, type);
+  // Ajoute les actions aux boutons
+  const boutonsCotes = document.querySelectorAll('.bouton-cote');
+  for (let indice = 0; indice < boutonsCotes.length; indice++) {
+    boutonsCotes[indice].onclick = function() {
+      const identifiantMatch = parseInt(this.dataset.rencontre);
+      const typePari = this.dataset.typePari;
+      basculerSelectionCoupon(identifiantMatch, typePari);
     };
   }
 
-  const videoButtons = document.querySelectorAll('.video-btn');
-  for (let i = 0; i < videoButtons.length; i++) {
-    videoButtons[i].onclick = function() {
-      openVideo(parseInt(this.dataset.video));
+  const boutonsVideo = document.querySelectorAll('.bouton-video');
+  for (let indice = 0; indice < boutonsVideo.length; indice++) {
+    boutonsVideo[indice].onclick = function() {
+      ouvrirVideo(parseInt(this.dataset.videoMatch));
     };
   }
 }
 
-function buildMatchCard(m) {
-  const isSelected = function(type) {
-    return coupon.some(function(c) { return c.matchId === m.id && c.type === type; });
+function creerCarteMatch(rencontre) {
+  const estSelectionne = function(typePari) {
+    return couponPari.some(function(element) { return element.identifiantMatch === rencontre.identifiant && element.typePari === typePari; });
   };
-  const isEnded = m.status === 'Terminé';
-  const isLive = m.status === 'En cours';
+  const estTermine = rencontre.statut === 'Terminé';
+  const estEnDirect = rencontre.statut === 'En cours';
 
-  let statusClass = 'status-upcoming';
-  if (isLive) statusClass = 'status-live';
-  if (m.status === 'Terminé') statusClass = 'status-ended';
+  let classeStatut = 'statut-a-venir';
+  if (estEnDirect) classeStatut = 'statut-direct';
+  if (rencontre.statut === 'Terminé') classeStatut = 'statut-termine';
 
-  let countdown = '';
-  if (m.status === 'À venir') {
-    countdown = '• Début dans ' + Math.max(0, Math.ceil((m.startTime - Date.now()) / 1000)) + 's';
-  } else if (isLive) {
-    countdown = '• En direct';
+  let compteARebours = '';
+  if (rencontre.statut === 'À venir') {
+    compteARebours = '• Début dans ' + Math.max(0, Math.ceil((rencontre.heureDebut - Date.now()) / 1000)) + 's';
+  } else if (estEnDirect) {
+    compteARebours = '• En direct';
   } else {
-    countdown = '• Terminé';
+    compteARebours = '• Terminé';
   }
 
-  let scoreText = '';
-  if (m.status === 'À venir') {
-    scoreText = 'Coup d\'envoi à ' + new Date(m.startTime).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+  let texteScore = '';
+  if (rencontre.statut === 'À venir') {
+    texteScore = 'Coup d\'envoi à ' + new Date(rencontre.heureDebut).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
   } else {
-    scoreText = '<span class="live-score">' + m.score1 + ' - ' + m.score2 + '</span>';
+    texteScore = '<span class="score-direct">' + rencontre.scoreA + ' - ' + rencontre.scoreB + '</span>';
   }
 
-  // Construction des 3 boutons de cotes
-  const btn1 = buildOddButton(m, 'team1', m.team1, isSelected('team1'), isEnded);
-  const btnX = buildOddButton(m, 'draw', 'Nul', isSelected('draw'), isEnded);
-  const btn2 = buildOddButton(m, 'team2', m.team2, isSelected('team2'), isEnded);
+  // Crée les trois boutons de cotes
+  const boutonEquipeA = creerBoutonCote(rencontre, 'equipeA', rencontre.equipeA, estSelectionne('equipeA'), estTermine);
+  const boutonNul = creerBoutonCote(rencontre, 'nul', 'Nul', estSelectionne('nul'), estTermine);
+  const boutonEquipeB = creerBoutonCote(rencontre, 'equipeB', rencontre.equipeB, estSelectionne('equipeB'), estTermine);
 
-  return '<div class="match-card">' +
-    '<div class="match-image" style="background-image:url(\'' + m.image + '\')"></div>' +
-    '<div class="match-body">' +
-      '<div class="match-top">' +
-        '<span class="match-comp">' + m.competition + '</span>' +
-        '<span class="match-status ' + statusClass + '">' + m.status + '</span>' +
+  return '<div class="carte-match">' +
+    '<div class="image-match" style="background-image:url(\'' + rencontre.image + '\')"></div>' +
+    '<div class="contenu-match">' +
+      '<div class="entete-match">' +
+        '<span class="competition-match">' + rencontre.competition + '</span>' +
+        '<span class="statut-match ' + classeStatut + '">' + rencontre.statut + '</span>' +
       '</div>' +
-      '<div class="match-teams">' + m.team1 + ' vs ' + m.team2 + '</div>' +
-      '<div class="match-score">' + scoreText + ' <small>' + countdown + '</small></div>' +
-      '<div class="odds">' + btn1 + btnX + btn2 + '</div>' +
-      '<button class="video-btn" data-video="' + m.id + '">▶ Regarder le résumé</button>' +
+      '<div class="equipes-match">' + rencontre.equipeA + ' vs ' + rencontre.equipeB + '</div>' +
+      '<div class="score-match">' + texteScore + ' <small>' + compteARebours + '</small></div>' +
+      '<div class="cotes">' + boutonEquipeA + boutonNul + boutonEquipeB + '</div>' +
+      '<button class="bouton-video" data-video-match="' + rencontre.identifiant + '">▶ Regarder le résumé</button>' +
     '</div>' +
   '</div>';
 }
 
-function buildOddButton(m, type, label, selected, disabled) {
-  const cls = selected ? 'odd-btn selected' : 'odd-btn';
-  const dis = disabled ? 'disabled' : '';
-  return '<button class="' + cls + '" data-match="' + m.id + '" data-type="' + type + '" ' + dis + '>' +
-    '<span class="odd-label">' + label + '</span>' +
-    '<span class="odd-value">' + m.odds[type] + '</span>' +
-    '<span class="odd-users">' + m.users[type] + ' joueurs</span>' +
+function creerBoutonCote(rencontre, typePari, libelle, estSelectionne, coteIndisponible) {
+  const classeCSS = estSelectionne ? 'bouton-cote selectionne' : 'bouton-cote';
+  const attributDesactive = coteIndisponible ? 'disabled' : '';
+  return '<button class="' + classeCSS + '" data-rencontre="' + rencontre.identifiant + '" data-type-pari="' + typePari + '" ' + attributDesactive + '>' +
+    '<span class="libelle-cote">' + libelle + '</span>' +
+    '<span class="valeur-cote">' + rencontre.cotes[typePari] + '</span>' +
+    '<span class="nombre-joueurs-cote">' + rencontre.utilisateurs[typePari] + ' joueurs</span>' +
   '</button>';
 }
 
-/* ============================================================
-   6. COUPON (ajout / suppression)
-   ============================================================ */
-function toggleCoupon(matchId, type) {
-  const m = matches.find(function(x) { return x.id === matchId; });
-  if (!m || m.status === 'Terminé') return;
+// Gestion du coupon
+function basculerSelectionCoupon(identifiantMatch, typePari) {
+  const rencontre = matchs.find(function(element) { return element.identifiant === identifiantMatch; });
+  if (!rencontre || rencontre.statut === 'Terminé') return;
 
-  // Vérifier si déjà présent
-  const index = coupon.findIndex(function(c) { return c.matchId === matchId && c.type === type; });
+  // Vérifie si la sélection existe déjà
+  const indice = couponPari.findIndex(function(element) { return element.identifiantMatch === identifiantMatch && element.typePari === typePari; });
 
-  if (index >= 0) {
-    coupon.splice(index, 1);
-    showToast('Sélection retirée.', 'info');
+  if (indice >= 0) {
+    couponPari.splice(indice, 1);
+    afficherNotification('Sélection retirée.', 'information');
   } else {
-    // Supprimer toute autre sélection de ce match
-    for (let i = coupon.length - 1; i >= 0; i--) {
-      if (coupon[i].matchId === matchId) coupon.splice(i, 1);
+    // Garde une seule sélection par match
+    for (let indice = couponPari.length - 1; indice >= 0; indice--) {
+      if (couponPari[indice].identifiantMatch === identifiantMatch) couponPari.splice(indice, 1);
     }
 
-    const label = type === 'team1' ? m.team1 : type === 'team2' ? m.team2 : 'Match nul';
-    coupon.push({
-      matchId: matchId,
-      type: type,
-      matchLabel: m.team1 + ' vs ' + m.team2,
-      choiceLabel: label,
-      odd: parseFloat(m.odds[type])
+    const libelle = typePari === 'equipeA' ? rencontre.equipeA : typePari === 'equipeB' ? rencontre.equipeB : 'Match nul';
+    couponPari.push({
+      identifiantMatch: identifiantMatch,
+      typePari: typePari,
+      libelleMatch: rencontre.equipeA + ' vs ' + rencontre.equipeB,
+      libelleChoix: libelle,
+      cote: parseFloat(rencontre.cotes[typePari])
     });
-    showToast('Ajouté : ' + m.team1 + ' vs ' + m.team2 + ' → ' + label);
+    afficherNotification('Ajouté : ' + rencontre.equipeA + ' vs ' + rencontre.equipeB + ' → ' + libelle);
   }
 
-  updateMatches();
-  updateCoupon();
+  actualiserMatchs();
+  actualiserCoupon();
 }
 
-function updateCoupon() {
-  const box = document.getElementById('couponItems');
+function actualiserCoupon() {
+  const conteneur = document.getElementById('listeCoupon');
 
-  if (coupon.length === 0) {
-    box.innerHTML = '<p style="color:#8896a8;text-align:center;padding:15px 0">Coupon vide.</p>';
+  if (couponPari.length === 0) {
+    conteneur.innerHTML = '<p style="color:#8896a8;text-align:center;padding:15px 0">Coupon vide.</p>';
   } else {
-    box.innerHTML = '';
-    for (let i = 0; i < coupon.length; i++) {
-      const c = coupon[i];
-      box.innerHTML += '<div class="coupon-item">' +
-        '<div class="coupon-item-info">' +
-          '<div class="coupon-item-title">' + c.matchLabel + '</div>' +
-          '<div class="coupon-item-choice">' + c.choiceLabel + '</div>' +
+    conteneur.innerHTML = '';
+    for (let indice = 0; indice < couponPari.length; indice++) {
+      const element = couponPari[indice];
+      conteneur.innerHTML += '<div class="selection-coupon">' +
+        '<div class="infos-selection">' +
+          '<div class="titre-selection">' + element.libelleMatch + '</div>' +
+          '<div class="choix-selection">' + element.libelleChoix + '</div>' +
         '</div>' +
-        '<span class="coupon-item-odd">' + c.odd + '</span>' +
-        '<button data-remove="' + i + '" aria-label="Retirer cette sélection">Retirer</button>' +
+        '<span class="cote-selection">' + element.cote + '</span>' +
+        '<button data-retrait="' + indice + '" aria-label="Retirer cette sélection">Retirer</button>' +
       '</div>';
     }
 
-    const removeButtons = box.querySelectorAll('button');
-    for (let i = 0; i < removeButtons.length; i++) {
-      removeButtons[i].onclick = function() {
-        const idx = parseInt(this.dataset.remove);
-        coupon.splice(idx, 1);
-        updateMatches();
-        updateCoupon();
+    const boutonsRetrait = conteneur.querySelectorAll('button');
+    for (let indice = 0; indice < boutonsRetrait.length; indice++) {
+      boutonsRetrait[indice].onclick = function() {
+        const indice = parseInt(this.dataset.retrait);
+        couponPari.splice(indice, 1);
+        actualiserMatchs();
+        actualiserCoupon();
       };
     }
   }
 
-  document.getElementById('couponCount').textContent = coupon.length;
+  document.getElementById('nombreSelections').textContent = couponPari.length;
 
-  let total = 1;
-  for (let i = 0; i < coupon.length; i++) {
-    total = total * coupon[i].odd;
+  let coteTotale = 1;
+  for (let indice = 0; indice < couponPari.length; indice++) {
+    coteTotale = coteTotale * couponPari[indice].cote;
   }
 
-  document.getElementById('totalOdd').textContent = coupon.length ? total.toFixed(2) : '-';
-  updatePotentialWin();
+  document.getElementById('coteTotale').textContent = couponPari.length ? coteTotale.toFixed(2) : '-';
+  actualiserGainPotentiel();
 }
 
-function updatePotentialWin() {
-  const stake = parseFloat(document.getElementById('stakeInput').value) || 0;
-  let total = 1;
-  for (let i = 0; i < coupon.length; i++) total = total * coupon[i].odd;
-  document.getElementById('potentialWin').textContent = formatNumber(stake * total);
+function actualiserGainPotentiel() {
+  const mise = parseFloat(document.getElementById('champMise').value) || 0;
+  let coteTotale = 1;
+  for (let indice = 0; indice < couponPari.length; indice++) coteTotale = coteTotale * couponPari[indice].cote;
+  document.getElementById('gainPotentiel').textContent = formaterNombre(mise * coteTotale);
 }
 
-document.getElementById('stakeInput').oninput = updatePotentialWin;
+document.getElementById('champMise').oninput = actualiserGainPotentiel;
 
-/* ============================================================
-   7. VALIDATION DU PARI
-   ============================================================ */
-document.getElementById('confirmBetBtn').onclick = function() {
-  const msg = document.getElementById('betMessage');
-  msg.textContent = '';
+// Validation du pari
+document.getElementById('boutonValiderPari').onclick = function() {
+  const messagePari = document.getElementById('messagePari');
+  messagePari.textContent = '';
 
-  if (coupon.length === 0) {
-    msg.textContent = 'Coupon vide.';
-    msg.style.color = '#d32f2f';
+  if (couponPari.length === 0) {
+    messagePari.textContent = 'Coupon vide.';
+    messagePari.style.color = '#d32f2f';
     return;
   }
 
-  const stake = parseFloat(document.getElementById('stakeInput').value);
-  if (!stake || stake <= 0) {
-    msg.textContent = 'Mise invalide.';
-    msg.style.color = '#d32f2f';
+  const mise = parseFloat(document.getElementById('champMise').value);
+  if (!mise || mise <= 0) {
+    messagePari.textContent = 'Mise invalide.';
+    messagePari.style.color = '#d32f2f';
     return;
   }
 
-  if (stake > credits) {
-    msg.textContent = 'Crédits insuffisants.';
-    msg.style.color = '#d32f2f';
+  if (mise > creditsFictifs) {
+    messagePari.textContent = 'Crédits insuffisants.';
+    messagePari.style.color = '#d32f2f';
     return;
   }
 
-  credits = credits - stake;
-  updateCredits();
+  creditsFictifs = creditsFictifs - mise;
+  actualiserCredits();
 
-  let total = 1;
-  for (let i = 0; i < coupon.length; i++) total = total * coupon[i].odd;
+  let coteTotale = 1;
+  for (let indice = 0; indice < couponPari.length; indice++) coteTotale = coteTotale * couponPari[indice].cote;
 
-  const newBet = {
-    id: Date.now(),
-    selections: coupon.slice(), // copie
-    stake: stake,
-    totalOdd: total,
-    potential: stake * total,
-    status: 'En attente',
-    win: 0
+  const nouveauPari = {
+    identifiant: Date.now(),
+    selections: couponPari.slice(), // Copie les sélections du coupon
+    mise: mise,
+    coteTotale: coteTotale,
+    gainPotentiel: mise * coteTotale,
+    statut: 'En attente',
+    gain: 0
   };
-  bets.push(newBet);
-  coupon = [];
+  paris.push(nouveauPari);
+  couponPari = [];
 
-  updateAll();
+  actualiserTout();
 
-  msg.textContent = 'Pari validé !';
-  msg.style.color = '#2a9d8f';
-  showToast('Pari validé - résultats bientôt…', 'info');
+  messagePari.textContent = 'Pari validé !';
+  messagePari.style.color = '#2a9d8f';
+  afficherNotification('Pari validé - résultats bientôt…', 'information');
 
-  setTimeout(function() { resolveBet(newBet.id); }, 5000 + Math.random() * 4000);
+  setTimeout(function() { determinerPari(nouveauPari.identifiant); }, 5000 + Math.random() * 4000);
 };
 
-function resolveBet(betId) {
-  const bet = bets.find(function(b) { return b.id === betId; });
-  if (!bet) return;
+function determinerPari(identifiantPari) {
+  const pari = paris.find(function(pari) { return pari.identifiant === identifiantPari; });
+  if (!pari) return;
 
   if (Math.random() < 0.45) {
-    bet.status = 'Gagné';
-    bet.win = bet.potential;
-    credits = credits + bet.potential;
-    showToast('Pari gagné : +' + formatNumber(bet.potential) + ' crédits !');
+    pari.statut = 'Gagné';
+    pari.gain = pari.gainPotentiel;
+    creditsFictifs = creditsFictifs + pari.gainPotentiel;
+    afficherNotification('Pari gagné : +' + formaterNombre(pari.gainPotentiel) + ' crédits !');
   } else {
-    bet.status = 'Perdu';
-    showToast('Pari perdu. Continuez !', 'error');
+    pari.statut = 'Perdu';
+    afficherNotification('Pari perdu. Continuez !', 'erreur');
   }
 
-  updateCredits();
-  updateResults();
+  actualiserCredits();
+  actualiserResultats();
 }
 
-/* ============================================================
-   8. AFFICHAGE DE L'HISTORIQUE
-   ============================================================ */
-function updateResults() {
-  const c = document.getElementById('resultsContainer');
+// Affichage de l'historique
+function actualiserResultats() {
+  const element = document.getElementById('listeResultats');
 
-  if (bets.length === 0) {
-    c.innerHTML = '<div class="panel" style="text-align:center;color:#8896a8;padding:30px">Aucun pari pour le moment.</div>';
+  if (paris.length === 0) {
+    element.innerHTML = '<div class="panneau" style="text-align:center;color:#8896a8;padding:30px">Aucun pari pour le moment.</div>';
     return;
   }
 
-  c.innerHTML = '';
-  const reversed = bets.slice().reverse();
+  element.innerHTML = '';
+  const parisInverses = paris.slice().reverse();
 
-  for (let i = 0; i < reversed.length; i++) {
-    const b = reversed[i];
-    let cls = 'pending';
-    if (b.status === 'Gagné') cls = 'win';
-    if (b.status === 'Perdu') cls = 'lose';
+  for (let indice = 0; indice < parisInverses.length; indice++) {
+    const pari = parisInverses[indice];
+    let classeCSS = 'en-attente';
+    if (pari.statut === 'Gagné') classeCSS = 'gagne';
+    if (pari.statut === 'Perdu') classeCSS = 'perdu';
 
     let message = '';
-    if (b.status === 'Gagné') message = 'Félicitations ! Vous avez gagné ' + formatNumber(b.win) + ' crédits.';
-    else if (b.status === 'Perdu') message = 'Dommage. Ne vous découragez pas !';
+    if (pari.statut === 'Gagné') message = 'Félicitations ! Vous avez gagné ' + formaterNombre(pari.gain) + ' crédits.';
+    else if (pari.statut === 'Perdu') message = 'Dommage. Ne vous découragez pas !';
     else message = 'Pari en attente…';
 
-    let selectionsHTML = '';
-    for (let j = 0; j < b.selections.length; j++) {
-      const s = b.selections[j];
-      selectionsHTML += '<div class="result-selection">' + s.matchLabel + ' - <strong>' + s.choiceLabel + '</strong> (cote ' + s.odd + ')</div>';
+    let htmlSelections = '';
+    for (let indiceInterne = 0; indiceInterne < pari.selections.length; indiceInterne++) {
+      const selection = pari.selections[indiceInterne];
+      htmlSelections += '<div class="selection-resultat">' + selection.libelleMatch + ' - <strong>' + selection.libelleChoix + '</strong> (cote ' + selection.cote + ')</div>';
     }
 
-    c.innerHTML += '<div class="result-item ' + cls + '">' +
-      '<div class="result-header">' +
-        '<span>Pari #' + String(b.id).slice(-6) + '</span>' +
-        '<span class="result-status ' + cls + '">' + b.status + '</span>' +
+    element.innerHTML += '<div class="element-resultat ' + classeCSS + '">' +
+      '<div class="entete-resultat">' +
+        '<span>Pari #' + String(pari.identifiant).slice(-6) + '</span>' +
+        '<span class="statut-resultat ' + classeCSS + '">' + pari.statut + '</span>' +
       '</div>' +
-      selectionsHTML +
-      '<div class="result-footer">' +
-        '<span>Mise : ' + formatNumber(b.stake) + '</span>' +
-        '<span>Cote : ' + b.totalOdd.toFixed(2) + '</span>' +
-        '<span>Gain : ' + formatNumber(b.win) + '</span>' +
+      htmlSelections +
+      '<div class="pied-resultat">' +
+        '<span>Mise : ' + formaterNombre(pari.mise) + '</span>' +
+        '<span>Cote : ' + pari.coteTotale.toFixed(2) + '</span>' +
+        '<span>Gain : ' + formaterNombre(pari.gain) + '</span>' +
       '</div>' +
-      '<div class="result-msg ' + cls + '">' + message + '</div>' +
+      '<div class="message-resultat ' + classeCSS + '">' + message + '</div>' +
     '</div>';
   }
 }
 
-/* ============================================================
-   9. AFFICHAGE DES COMBINÉS
-   ============================================================ */
-function updateCombos() {
-  const c = document.getElementById('combosContainer');
-  c.innerHTML = '';
+// Affichage des combinés
+function actualiserCombines() {
+  const element = document.getElementById('listeCombines');
+  element.innerHTML = '';
 
-  for (let i = 0; i < combos.length; i++) {
-    const cb = combos[i];
-    let picksHTML = '';
-    for (let j = 0; j < cb.picks.length; j++) {
-      picksHTML += '<div class="combo-pick">' + cb.picks[j].label + '</div>';
+  for (let indice = 0; indice < combines.length; indice++) {
+    const combine = combines[indice];
+    let htmlSelectionsCombine = '';
+    for (let indiceInterne = 0; indiceInterne < combine.selections.length; indiceInterne++) {
+      htmlSelectionsCombine += '<div class="selection-combine">' + combine.selections[indiceInterne].libelle + '</div>';
     }
 
-    c.innerHTML += '<div class="combo">' +
-      '<div class="combo-title">Combiné #' + (i + 1) + '</div>' +
-      picksHTML +
-      '<div class="combo-footer">' +
-        '<span class="combo-odd">× ' + cb.totalOdd + '</span>' +
-        '<button class="combo-add" data-combo="' + i + '">Ajouter</button>' +
+    element.innerHTML += '<div class="combine">' +
+      '<div class="titre-combine">Combiné #' + (indice + 1) + '</div>' +
+      htmlSelectionsCombine +
+      '<div class="pied-combine">' +
+        '<span class="cote-combine">× ' + combine.coteTotale + '</span>' +
+        '<button class="bouton-ajout-combine" data-combine="' + indice + '">Ajouter</button>' +
       '</div>' +
     '</div>';
   }
 
-  const addButtons = document.querySelectorAll('.combo-add');
-  for (let i = 0; i < addButtons.length; i++) {
-    addButtons[i].onclick = function() {
-      const comboIndex = parseInt(this.dataset.combo);
-      const cb = combos[comboIndex];
+  const boutonsAjout = document.querySelectorAll('.bouton-ajout-combine');
+  for (let indice = 0; indice < boutonsAjout.length; indice++) {
+    boutonsAjout[indice].onclick = function() {
+      const indiceCombine = parseInt(this.dataset.combine);
+      const combine = combines[indiceCombine];
 
-      coupon = [];
-      for (let j = 0; j < cb.picks.length; j++) {
-        const p = cb.picks[j];
-        const m = matches.find(function(x) { return x.id === p.matchId; });
-        const label = p.type === 'team1' ? m.team1 : p.type === 'team2' ? m.team2 : 'Match nul';
-        coupon.push({
-          matchId: m.id,
-          type: p.type,
-          matchLabel: m.team1 + ' vs ' + m.team2,
-          choiceLabel: label,
-          odd: parseFloat(m.odds[p.type])
+      couponPari = [];
+      for (let indiceInterne = 0; indiceInterne < combine.selections.length; indiceInterne++) {
+        const selection = combine.selections[indiceInterne];
+        const rencontre = matchs.find(function(element) { return element.identifiant === selection.identifiantMatch; });
+        const libelle = selection.typePari === 'equipeA' ? rencontre.equipeA : selection.typePari === 'equipeB' ? rencontre.equipeB : 'Match nul';
+        couponPari.push({
+          identifiantMatch: rencontre.identifiant,
+          typePari: selection.typePari,
+          libelleMatch: rencontre.equipeA + ' vs ' + rencontre.equipeB,
+          libelleChoix: libelle,
+          cote: parseFloat(rencontre.cotes[selection.typePari])
         });
       }
-      updateMatches();
-      updateCoupon();
-      showToast('Combiné #' + (comboIndex + 1) + ' ajouté.');
+      actualiserMatchs();
+      actualiserCoupon();
+      afficherNotification('Combiné #' + (indiceCombine + 1) + ' ajouté.');
     };
   }
 }
 
-/* ============================================================
-   10. CRÉDITS
-   ============================================================ */
-function updateCredits() {
-  document.getElementById('creditsDisplay').textContent = formatNumber(credits) + ' crédits';
+// Gestion des crédits
+function actualiserCredits() {
+  document.getElementById('creditsAffiches').textContent = formaterNombre(creditsFictifs) + ' crédits';
 }
 
-/* ============================================================
-   11. SIMULATION (compte à rebours, scores)
-   ============================================================ */
-function startSimulation() {
+// Simulation des matchs et des scores
+function lancerSimulation() {
   setInterval(function() {
-    const now = Date.now();
-    let changed = false;
+    const maintenant = Date.now();
+    let aChange = false;
 
-    for (let i = 0; i < matches.length; i++) {
-      const m = matches[i];
+    for (let indice = 0; indice < matchs.length; indice++) {
+      const rencontre = matchs[indice];
 
-      if (m.status === 'À venir' && now >= m.startTime) {
-        m.status = 'En cours';
-        changed = true;
-        showToast('Coup d\'envoi : ' + m.team1 + ' vs ' + m.team2, 'info');
+      if (rencontre.statut === 'À venir' && maintenant >= rencontre.heureDebut) {
+        rencontre.statut = 'En cours';
+        aChange = true;
+        afficherNotification('Coup d\'envoi : ' + rencontre.equipeA + ' vs ' + rencontre.equipeB, 'information');
       }
 
-      if (m.status === 'En cours' && now >= m.startTime + m.duration) {
-        m.status = 'Terminé';
-        m.score1 = randomInt(0, 5);
-        m.score2 = randomInt(0, 5);
-        changed = true;
+      if (rencontre.statut === 'En cours' && maintenant >= rencontre.heureDebut + rencontre.duree) {
+        rencontre.statut = 'Terminé';
+        rencontre.scoreA = nombreAleatoire(0, 5);
+        rencontre.scoreB = nombreAleatoire(0, 5);
+        aChange = true;
       }
 
-      if (m.status === 'En cours' && Math.random() < 0.25) {
-        if (Math.random() < 0.5) m.score1++; else m.score2++;
-        changed = true;
+      if (rencontre.statut === 'En cours' && Math.random() < 0.25) {
+        if (Math.random() < 0.5) rencontre.scoreA++; else rencontre.scoreB++;
+        aChange = true;
       }
     }
 
-    if (changed) {
-      if (!document.getElementById('tab-home').classList.contains('hidden')) updateMatches();
-      if (!document.getElementById('tab-live').classList.contains('hidden')) updateLive();
+    if (aChange) {
+      if (!document.getElementById('onglet-accueil').classList.contains('masque')) actualiserMatchs();
+      if (!document.getElementById('onglet-direct').classList.contains('masque')) actualiserDirect();
     }
   }, 1000);
 }
 
-/* ============================================================
-   13. FILTRES
-   ============================================================ */
-function setupFilters() {
-  const chips = document.querySelectorAll('#sportChips .chip');
-  for (let i = 0; i < chips.length; i++) {
-    chips[i].onclick = function() {
-      for (let j = 0; j < chips.length; j++) chips[j].classList.remove('active');
-      this.classList.add('active');
-      currentFilters.sport = this.dataset.sport;
+// Filtres des matchs
+function initialiserFiltres() {
+  const boutonsSport = document.querySelectorAll('#filtresSport .filtre-rapide');
+  for (let indice = 0; indice < boutonsSport.length; indice++) {
+    boutonsSport[indice].onclick = function() {
+      for (let indiceInterne = 0; indiceInterne < boutonsSport.length; indiceInterne++) boutonsSport[indiceInterne].classList.remove('actif');
+      this.classList.add('actif');
+      filtresActuels.sport = this.dataset.sport;
 
-      // Mettre à jour les compétitions disponibles
-      const compSelect = document.getElementById('compFilter');
-      let comps = [];
-      if (currentFilters.sport === 'all') {
-        for (const s in compsList) comps = comps.concat(compsList[s]);
+      // Met à jour les compétitions disponibles
+      const listeCompetitions = document.getElementById('filtreCompetition');
+      let competitions = [];
+      if (filtresActuels.sport === 'all') {
+        for (const selection in competitionsParSport) competitions = competitions.concat(competitionsParSport[selection]);
       } else {
-        comps = compsList[currentFilters.sport];
+        competitions = competitionsParSport[filtresActuels.sport];
       }
-      // Supprimer les doublons
-      const unique = [];
-      for (let k = 0; k < comps.length; k++) {
-        if (unique.indexOf(comps[k]) === -1) unique.push(comps[k]);
+      // Évite les compétitions en double
+      const competitionsUniques = [];
+      for (let indiceCompetition = 0; indiceCompetition < competitions.length; indiceCompetition++) {
+        if (competitionsUniques.indexOf(competitions[indiceCompetition]) === -1) competitionsUniques.push(competitions[indiceCompetition]);
       }
 
-      compSelect.innerHTML = '<option value="all">Toutes compétitions</option>';
-      for (let k = 0; k < unique.length; k++) {
-        compSelect.innerHTML += '<option value="' + unique[k] + '">' + unique[k] + '</option>';
+      listeCompetitions.innerHTML = '<option value="all">Toutes compétitions</option>';
+      for (let indiceCompetition = 0; indiceCompetition < competitionsUniques.length; indiceCompetition++) {
+        listeCompetitions.innerHTML += '<option value="' + competitionsUniques[indiceCompetition] + '">' + competitionsUniques[indiceCompetition] + '</option>';
       }
-      currentFilters.competition = 'all';
-      updateMatches();
+      filtresActuels.competition = 'all';
+      actualiserMatchs();
     };
   }
 
-  document.getElementById('compFilter').onchange = function() {
-    currentFilters.competition = this.value;
-    updateMatches();
+  document.getElementById('filtreCompetition').onchange = function() {
+    filtresActuels.competition = this.value;
+    actualiserMatchs();
   };
 
-  document.getElementById('statusFilter').onchange = function() {
-    currentFilters.status = this.value;
-    updateMatches();
+  document.getElementById('filtreStatut').onchange = function() {
+    filtresActuels.statut = this.value;
+    actualiserMatchs();
   };
 }
 
-/* ============================================================
-   14. ONGLETS
-   ============================================================ */
-function setupTabs() {
-  const tabs = document.querySelectorAll('.tab-btn');
-  for (let i = 0; i < tabs.length; i++) {
-    tabs[i].onclick = function() {
-      for (let j = 0; j < tabs.length; j++) tabs[j].classList.remove('active');
-      this.classList.add('active');
+// Navigation entre les onglets
+function initialiserOnglets() {
+  const onglets = document.querySelectorAll('.bouton-onglet');
+  for (let indice = 0; indice < onglets.length; indice++) {
+    onglets[indice].onclick = function() {
+      for (let indiceInterne = 0; indiceInterne < onglets.length; indiceInterne++) onglets[indiceInterne].classList.remove('actif');
+      this.classList.add('actif');
 
-      const name = this.dataset.tab;
-      document.getElementById('tab-home').classList.add('hidden');
-      document.getElementById('tab-live').classList.add('hidden');
-      document.getElementById('tab-history').classList.add('hidden');
-      document.getElementById('tab-' + name).classList.remove('hidden');
+      const nom = this.dataset.onglet;
+      document.getElementById('onglet-accueil').classList.add('masque');
+      document.getElementById('onglet-direct').classList.add('masque');
+      document.getElementById('onglet-historique').classList.add('masque');
+      document.getElementById('onglet-' + nom).classList.remove('masque');
 
-      if (name === 'live') updateLive();
-      if (name === 'history') updateResults();
+      if (nom === 'direct') actualiserDirect();
+      if (nom === 'historique') actualiserResultats();
     };
   }
 }
 
-/* ============================================================
-   15. VUE LIVE
-   ============================================================ */
-function updateLive() {
-  const c = document.getElementById('liveList');
-  const liveMatches = matches.filter(function(m) { return m.status === 'En cours'; });
+// Affichage des matchs en direct
+function actualiserDirect() {
+  const element = document.getElementById('listeDirect');
+  const matchsEnDirect = matchs.filter(function(rencontre) { return rencontre.statut === 'En cours'; });
 
-  if (liveMatches.length === 0) {
-    c.innerHTML = '<div class="panel" style="text-align:center;color:#8896a8;padding:30px">Aucun match en direct pour le moment.</div>';
+  if (matchsEnDirect.length === 0) {
+    element.innerHTML = '<div class="panneau" style="text-align:center;color:#8896a8;padding:30px">Aucun match en direct pour le moment.</div>';
     return;
   }
 
-  c.innerHTML = '';
-  for (let i = 0; i < liveMatches.length; i++) {
-    const m = liveMatches[i];
-    const activeClass = liveMatchId === m.id ? 'active' : '';
-    c.innerHTML += '<div class="live-item ' + activeClass + '" data-live="' + m.id + '">' +
+  element.innerHTML = '';
+  for (let indice = 0; indice < matchsEnDirect.length; indice++) {
+    const rencontre = matchsEnDirect[indice];
+    const classeActive = identifiantMatchDirect === rencontre.identifiant ? 'actif' : '';
+    element.innerHTML += '<div class="element-direct ' + classeActive + '" data-direct="' + rencontre.identifiant + '">' +
       '<div>' +
-        '<div class="live-item-teams">' + m.team1 + ' vs ' + m.team2 + '</div>' +
-        '<div style="font-size:0.75em;color:#8896a8">' + m.competition + '</div>' +
+        '<div class="equipes-direct">' + rencontre.equipeA + ' vs ' + rencontre.equipeB + '</div>' +
+        '<div style="font-size:0.75em;color:#8896a8">' + rencontre.competition + '</div>' +
       '</div>' +
-      '<div class="live-item-score">' + m.score1 + ' - ' + m.score2 + '</div>' +
+      '<div class="score-element-direct">' + rencontre.scoreA + ' - ' + rencontre.scoreB + '</div>' +
     '</div>';
   }
 
-  const items = c.querySelectorAll('.live-item');
-  for (let i = 0; i < items.length; i++) {
-    items[i].onclick = function() {
-      liveMatchId = parseInt(this.dataset.live);
-      const m = matches.find(function(x) { return x.id === liveMatchId; });
-      updateLivePlayer(m);
-      updateLive();
+  const elements = element.querySelectorAll('.element-direct');
+  for (let indice = 0; indice < elements.length; indice++) {
+    elements[indice].onclick = function() {
+      identifiantMatchDirect = parseInt(this.dataset.direct);
+      const rencontre = matchs.find(function(element) { return element.identifiant === identifiantMatchDirect; });
+      actualiserLecteurDirect(rencontre);
+      actualiserDirect();
     };
   }
 
-  // Sélectionner le premier automatiquement
-  if (!liveMatchId && liveMatches.length > 0) {
-    liveMatchId = liveMatches[0].id;
-    const m = liveMatches[0];
-    updateLivePlayer(m);
-    updateLive();
+  // Sélectionne le premier match automatiquement
+  if (!identifiantMatchDirect && matchsEnDirect.length > 0) {
+    identifiantMatchDirect = matchsEnDirect[0].identifiant;
+    const rencontre = matchsEnDirect[0];
+    actualiserLecteurDirect(rencontre);
+    actualiserDirect();
   }
 }
 
-function updateLivePlayer(match) {
-  const videoUrl = getMatchVideoUrl(match);
-  const iframe = document.getElementById('liveIframe');
-  const searchLink = document.getElementById('liveSearchLink');
+function actualiserLecteurDirect(rencontre) {
+  const urlVideo = obtenirUrlVideoMatch(rencontre);
+  const lecteurIntegre = document.getElementById('lecteurDirect');
+  const lienRecherche = document.getElementById('lienRechercheDirect');
 
-  if (videoUrl) {
-    iframe.src = videoUrl + '?autoplay=1';
-    searchLink.style.display = 'none';
+  if (urlVideo) {
+    lecteurIntegre.src = urlVideo + '?autoplay=1';
+    lienRecherche.style.display = 'none';
   } else {
-    iframe.removeAttribute('src');
-    searchLink.href = getMatchSearchUrl(match);
-    searchLink.style.display = 'inline-block';
+    lecteurIntegre.removeAttribute('src');
+    lienRecherche.href = obtenirUrlRechercheMatch(rencontre);
+    lienRecherche.style.display = 'inline-block';
   }
 
-  document.getElementById('liveTitle').textContent =
-    match.team1 + ' vs ' + match.team2 + ' - ' + match.score1 + ' - ' + match.score2;
+  document.getElementById('titreDirect').textContent =
+    rencontre.equipeA + ' vs ' + rencontre.equipeB + ' - ' + rencontre.scoreA + ' - ' + rencontre.scoreB;
 }
 
-/* ============================================================
-   16. MODALE VIDÉO
-   ============================================================ */
-function setupVideoModal() {
-  document.getElementById('closeVideo').onclick = function() {
-    document.getElementById('videoModal').classList.add('hidden');
-    document.getElementById('videoIframe').src = '';
-    document.getElementById('videoSearchLink').style.display = 'none';
+// Lecture des vidéos de match
+function initialiserLecteurVideo() {
+  document.getElementById('boutonFermerVideo').onclick = function() {
+    document.getElementById('fenetreVideo').classList.add('masque');
+    document.getElementById('lecteurVideo').src = '';
+    document.getElementById('lienRechercheVideo').style.display = 'none';
   };
 }
 
-function openVideo(matchId) {
-  const m = matches.find(function(x) { return x.id === matchId; });
-  if (!m) return;
+function ouvrirVideo(identifiantMatch) {
+  const rencontre = matchs.find(function(element) { return element.identifiant === identifiantMatch; });
+  if (!rencontre) return;
 
-  const videoUrl = getMatchVideoUrl(m);
-  const iframe = document.getElementById('videoIframe');
-  const searchLink = document.getElementById('videoSearchLink');
-  if (videoUrl) {
-    iframe.style.display = 'block';
-    iframe.src = videoUrl + '?autoplay=1&rel=0';
-    searchLink.style.display = 'none';
+  const urlVideo = obtenirUrlVideoMatch(rencontre);
+  const lecteurIntegre = document.getElementById('lecteurVideo');
+  const lienRecherche = document.getElementById('lienRechercheVideo');
+  if (urlVideo) {
+    lecteurIntegre.style.display = 'block';
+    lecteurIntegre.src = urlVideo + '?autoplay=1&rel=0';
+    lienRecherche.style.display = 'none';
   } else {
-    iframe.removeAttribute('src');
-    iframe.style.display = 'none';
-    searchLink.href = getMatchSearchUrl(m);
-    searchLink.style.display = 'inline-block';
+    lecteurIntegre.removeAttribute('src');
+    lecteurIntegre.style.display = 'none';
+    lienRecherche.href = obtenirUrlRechercheMatch(rencontre);
+    lienRecherche.style.display = 'inline-block';
   }
-  document.getElementById('videoTitle').textContent = m.team1 + ' vs ' + m.team2 + ' - Résumé';
-  document.getElementById('videoModal').classList.remove('hidden');
+  document.getElementById('titreVideo').textContent = rencontre.equipeA + ' vs ' + rencontre.equipeB + ' - Résumé';
+  document.getElementById('fenetreVideo').classList.remove('masque');
 }
 
-/* ============================================================
-   20. CHATBOT
-   ============================================================ */
-function setupChatbot() {
-  const toggle = document.getElementById('chatToggle');
-  const panel = document.getElementById('chatPanel');
-  const form = document.getElementById('chatForm');
-  const input = document.getElementById('chatInput');
-  const messages = document.getElementById('chatMessages');
+// Assistant de discussion
+function initialiserAssistant() {
+  const boutonBascule = document.getElementById('boutonAssistant');
+  const panneau = document.getElementById('panneauAssistant');
+  const formulaire = document.getElementById('formulaireAssistant');
+  const champSaisie = document.getElementById('champMessageAssistant');
+  const messages = document.getElementById('messagesAssistant');
 
-  toggle.onclick = function() { panel.classList.toggle('hidden'); };
-  document.getElementById('chatClose').onclick = function() { panel.classList.add('hidden'); };
+  boutonBascule.onclick = function() { panneau.classList.toggle('masque'); };
+  document.getElementById('boutonFermerAssistant').onclick = function() { panneau.classList.add('masque'); };
 
-  // Suggestions rapides
-  const suggestions = document.querySelectorAll('.chat-suggestions button');
-  for (let i = 0; i < suggestions.length; i++) {
-    suggestions[i].onclick = function() {
-      input.value = this.dataset.q;
-      form.dispatchEvent(new Event('submit', { cancelable: true }));
+  // Gère les suggestions rapides
+  const suggestions = document.querySelectorAll('.suggestions-assistant button');
+  for (let indice = 0; indice < suggestions.length; indice++) {
+    suggestions[indice].onclick = function() {
+      champSaisie.value = this.dataset.question;
+      formulaire.dispatchEvent(new Event('submit', { cancelable: true }));
     };
   }
 
-  form.onsubmit = function(e) {
-    e.preventDefault();
-    const q = input.value.trim();
-    if (!q) return;
+  formulaire.onsubmit = function(evenement) {
+    evenement.preventDefault();
+    const question = champSaisie.value.trim();
+    if (!question) return;
 
-    addChatMessage(q, 'user');
-    input.value = '';
+    ajouterMessageDiscussion(question, 'utilisateur');
+    champSaisie.value = '';
 
-    // Petit délai pour faire "réfléchir" le bot
+    // Attend un instant avant la réponse
     setTimeout(function() {
-      const answer = getBotAnswer(q);
-      addChatMessage(answer, 'bot');
+      const reponse = obtenirReponseAssistant(question);
+      ajouterMessageDiscussion(reponse, 'assistant');
     }, 500);
   };
 
-  function addChatMessage(text, who) {
-    const el = document.createElement('div');
-    el.className = 'message ' + who;
-    el.textContent = text;
-    messages.appendChild(el);
+  function ajouterMessageDiscussion(texte, auteur) {
+    const element = document.createElement('div');
+    element.className = 'message-discussion ' + auteur;
+    element.textContent = texte;
+    messages.appendChild(element);
     messages.scrollTop = messages.scrollHeight;
   }
 }
 
-function getBotAnswer(text) {
-  const t = text.toLowerCase();
+function obtenirReponseAssistant(texte) {
+  const texteMinuscule = texte.toLowerCase();
 
-  if (t.indexOf('bonjour') !== -1 || t.indexOf('salut') !== -1 || t.indexOf('hello') !== -1) {
+  if (texteMinuscule.indexOf('bonjour') !== -1 || texteMinuscule.indexOf('salut') !== -1 || texteMinuscule.indexOf('hello') !== -1) {
     return 'Bonjour. Comment puis-je vous aider ? Je peux expliquer les cotes, les combinés et le jeu responsable.';
   }
-  if (t.indexOf('age') !== -1 || t.indexOf('âge') !== -1 || t.indexOf('18') !== -1 || t.indexOf('mineur') !== -1) {
+  if (texteMinuscule.indexOf('age') !== -1 || texteMinuscule.indexOf('âge') !== -1 || texteMinuscule.indexOf('18') !== -1 || texteMinuscule.indexOf('mineur') !== -1) {
     return 'Efbet est réservé aux personnes majeures (18 ans et +). La date de naissance est vérifiée à la première visite.';
   }
-  if (t.indexOf('cote') !== -1 || t.indexOf('odd') !== -1) {
+  if (texteMinuscule.indexOf('cote') !== -1 || texteMinuscule.indexOf('odd') !== -1) {
     return 'Une cote multipliée par votre mise donne votre gain potentiel. Exemple : cote 2.50 sur 10 crédits donne 25 crédits.';
   }
-  if (t.indexOf('combin') !== -1) {
+  if (texteMinuscule.indexOf('combin') !== -1) {
     return 'Un combiné regroupe plusieurs paris. Les cotes se multiplient. Il faut que tous les paris gagnent.';
   }
-  if (t.indexOf('respons') !== -1 || t.indexOf('limite') !== -1 || t.indexOf('dépendance') !== -1) {
+  if (texteMinuscule.indexOf('respons') !== -1 || texteMinuscule.indexOf('limite') !== -1 || texteMinuscule.indexOf('dépendance') !== -1) {
     return 'Les paris comportent des risques de dépendance. Jouez avec modération. Les crédits utilisés ici sont fictifs.';
   }
-  if (t.indexOf('crédit') !== -1 || t.indexOf('solde') !== -1) {
-    return 'Vous avez ' + formatNumber(credits) + ' crédits fictifs. Aucun argent réel.';
+  if (texteMinuscule.indexOf('crédit') !== -1 || texteMinuscule.indexOf('solde') !== -1) {
+    return 'Vous avez ' + formaterNombre(creditsFictifs) + ' crédits fictifs. Aucun argent réel.';
   }
-  if (t.indexOf('pari') !== -1 || t.indexOf('paris') !== -1) {
+  if (texteMinuscule.indexOf('pari') !== -1 || texteMinuscule.indexOf('paris') !== -1) {
     return 'Pour parier : 1) Choisissez un match 2) Cliquez sur une cote 3) Vérifiez le coupon 4) Entrez la mise 5) Validez.';
   }
-  if (t.indexOf('live') !== -1 || t.indexOf('direct') !== -1 || t.indexOf('vidéo') !== -1) {
+  if (texteMinuscule.indexOf('direct') !== -1 || texteMinuscule.indexOf('direct') !== -1 || texteMinuscule.indexOf('vidéo') !== -1) {
     return 'Cliquez sur Live pour voir les matchs en direct, ou sur Regarder le résumé sur un match.';
   }
-  if (t.indexOf('merci') !== -1) {
+  if (texteMinuscule.indexOf('merci') !== -1) {
     return 'Avec plaisir. Bonne chance !';
   }
 
