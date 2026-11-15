@@ -1,6 +1,4 @@
-/* ============================================================
-   VARIABLES DE COULEURS (blanc, bleu, rouge)
-   ============================================================ */
+/* Couleurs du site */
 :root {
   --blue: #0d47a1;
   --blue-light: #1565c0;
@@ -19,9 +17,7 @@
   --shadow: 0 2px 10px rgba(13, 71, 161, 0.08);
 }
 
-/* ============================================================
-   RESET DE BASE
-   ============================================================ */
+/* Styles de base */
 * {
   margin: 0;
   padding: 0;
@@ -49,9 +45,7 @@ input, select {
   display: none !important;
 }
 
-/* ============================================================
-   MODALES
-   ============================================================ */
+/* Fenêtres modales */
 .modal {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
@@ -117,9 +111,7 @@ input, select {
   color: #6d4c00;
 }
 
-/* ============================================================
-   BOUTONS
-   ============================================================ */
+/* Boutons */
 .btn {
   border: none;
   padding: 12px 20px;
@@ -159,9 +151,7 @@ input, select {
   width: 100%;
 }
 
-/* ============================================================
-   HEADER
-   ============================================================ */
+/* En-tête */
 .header {
   background: var(--white);
   border-bottom: 3px solid var(--blue);
@@ -200,9 +190,7 @@ input, select {
   font-size: 0.9em;
 }
 
-/* ============================================================
-   ONGLETS
-   ============================================================ */
+/* Navigation par onglets */
 .tabs {
   display: flex;
   gap: 5px;
@@ -231,9 +219,7 @@ input, select {
   color: white;
 }
 
-/* ============================================================
-   LAYOUT PRINCIPAL
-   ============================================================ */
+/* Mise en page principale */
 .main-layout {
   display: flex;
   gap: 20px;
@@ -257,9 +243,7 @@ input, select {
   gap: 15px;
 }
 
-/* ============================================================
-   PANNEAUX
-   ============================================================ */
+/* Panneaux */
 .panel {
   background: var(--white);
   border-radius: var(--radius);
@@ -273,9 +257,7 @@ input, select {
   margin-bottom: 15px;
 }
 
-/* ============================================================
-   FILTRES
-   ============================================================ */
+/* Filtres */
 .filters {
   background: var(--white);
   padding: 15px;
@@ -334,9 +316,7 @@ select:focus {
   border-color: var(--blue);
 }
 
-/* ============================================================
-   CARTES DE MATCHS
-   ============================================================ */
+/* Cartes de matchs */
 .matches-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -420,7 +400,7 @@ select:focus {
   font-weight: bold;
 }
 
-/* Cotes */
+/* Boutons de cotes */
 .odds {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
@@ -502,9 +482,7 @@ select:focus {
   border-style: solid;
 }
 
-/* ============================================================
-   COUPON
-   ============================================================ */
+/* Coupon de paris */
 .coupon-item {
   background: var(--grey-50);
   padding: 12px;
@@ -596,9 +574,7 @@ select:focus {
   font-size: 0.9em;
 }
 
-/* ============================================================
-   COMBINÉS
-   ============================================================ */
+/* Paris combinés */
 .combo {
   background: var(--blue-soft);
   padding: 12px;
@@ -646,9 +622,7 @@ select:focus {
   background: var(--red);
 }
 
-/* ============================================================
-   LIVE
-   ============================================================ */
+/* Matchs en direct */
 .live-player {
   position: relative;
   width: 100%;
@@ -727,9 +701,7 @@ select:focus {
   font-size: 1.1em;
 }
 
-/* ============================================================
-   RÉSULTATS
-   ============================================================ */
+/* Résultats */
 .result-item {
   background: var(--white);
   border-radius: var(--radius);
@@ -806,9 +778,7 @@ select:focus {
   color: var(--grey-600);
 }
 
-/* ============================================================
-   MODALE VIDÉO
-   ============================================================ */
+/* Lecteur vidéo */
 .video-box {
   max-width: 800px;
   position: relative;
@@ -844,9 +814,7 @@ select:focus {
   border: none;
 }
 
-/* ============================================================
-   CHATBOT
-   ============================================================ */
+/* Assistant de discussion */
 .chat-toggle {
   position: fixed;
   bottom: 25px;
@@ -989,9 +957,7 @@ select:focus {
   font-size: 0.85em;
 }
 
-/* ============================================================
-   TOASTS
-   ============================================================ */
+/* Notifications */
 .toast-container {
   position: fixed;
   bottom: 25px;
@@ -1022,9 +988,7 @@ select:focus {
   to { transform: translateX(0); opacity: 1; }
 }
 
-/* ============================================================
-   FOOTER
-   ============================================================ */
+/* Pied de page */
 .footer {
   text-align: center;
   padding: 25px;
@@ -1039,9 +1003,7 @@ select:focus {
   margin-top: 5px;
 }
 
-/* ============================================================
-   RESPONSIVE (mobile et tablette)
-   ============================================================ */
+/* Adaptation aux écrans mobiles et tablettes */
 @media (max-width: 1024px) {
   .main-layout {
     flex-direction: column;
