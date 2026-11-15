@@ -1,4 +1,4 @@
--- Fonctionnalités du site de paris sportifs en ligne
+ Fonctionnalités du site de paris sportifs en ligne
 
 1. Accès et jeu responsable
    - À sa première visite, l'utilisateur doit indiquer sa date de naissance.
